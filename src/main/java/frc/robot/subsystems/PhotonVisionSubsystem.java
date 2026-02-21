@@ -18,7 +18,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     public PhotonCamera getCamera(){
         return camera;
     }
-
+/* 
     public void processVision(){
 
     PhotonPipelineResult result = camera.getLatestResult();
@@ -41,5 +41,5 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         double poseAmbiguity = target.getPoseAmbiguity();
         }
     }
-
+*/
 }

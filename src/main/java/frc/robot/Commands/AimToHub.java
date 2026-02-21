@@ -49,6 +49,10 @@ public class AimToHub extends Command {
         new Translation3d(-0.6096, 0.0, 0.3048), 
         new Rotation3d()
     );
+    private final Transform3d robotToCamera = new Transform3d(
+    new Translation3d(0.0, 0.0, 0.0), // X, Y, Z in meters
+    new Rotation3d(0, 0, Math.PI/2)  // Rotated 90 degrees (left)
+);
     private final double targetDistance=3; // in meters
       public AimToHub(CommandSwerveDrivetrain s_Swerve, PhotonCamera camera, GenericHID controller) {
         this.s_Swerve = s_Swerve;
@@ -79,13 +83,15 @@ public class AimToHub extends Command {
                     if (target.getFiducialId() == 1) {
                         targetVisible = true;
                         var transform = target.getBestCameraToTarget();
-                        Transform3d cameraToHub = target.getBestCameraToTarget().plus(tagToHub);
+                        Transform3d cameraToTarget = target.getBestCameraToTarget();
+                        Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
+                        Transform3d robotToHub = robotToTarget.plus(tagToHub);
                         double tagX=transform.getX();
                         double tagY=transform.getY();
                         double tagZ=transform.getZ();
-                         hubX=cameraToHub.getX();
-                         hubY=cameraToHub.getY();
-                         hubZ=cameraToHub.getZ();
+                         hubX=robotToHub.getX();
+                         hubY=robotToHub.getY();
+                         hubZ=robotToHub.getZ();
                         aprilTagRotation=transform.getRotation().getZ();
 
                            if(aprilTagRotation<0){
@@ -120,7 +126,7 @@ if(Math.abs(distanceError)>0.04){
 }else{
     limitedForward=0;
 }
-        s_Swerve.setControl(driveRequest.withVelocityY(-limitedForward).withRotationalRate(-limitedTurn));
+        s_Swerve.setControl(driveRequest.withVelocityX(0).withRotationalRate(-limitedTurn));
         SmartDashboard.putNumber("Rotation of the april tag",aprilTagRotation);
         SmartDashboard.putNumber("Finds distance to april tag", aprilTagDistance);
         SmartDashboard.putNumber("Angle to turn to the hub", Units.radiansToDegrees(rotationOutput));
@@ -128,5 +134,7 @@ if(Math.abs(distanceError)>0.04){
         SmartDashboard.putNumber("April Tag Inaccurecy",poseAmbiguity);
         SmartDashboard.putNumber("Hub X", hubX);
         SmartDashboard.putNumber("Hub Y", hubY);
+        SmartDashboard.putNumber("Forward Photon", limitedForward);
+        SmartDashboard.putNumber("Turn photon", limitedTurn);
     }
 }
