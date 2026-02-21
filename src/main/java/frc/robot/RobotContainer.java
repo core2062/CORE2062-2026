@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.constants.Constants;
 import frc.robot.commands.ConveyerTurn;
+import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeJoystickCommand;
@@ -52,7 +53,7 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     
     /* Subsystems */
-    private final LauncherSubsystem l_Launch = new LauncherSubsystem();
+    private final LauncherSubsystem l_launch = new LauncherSubsystem();
     private final IndexerSubsystem i_index = new IndexerSubsystem();
     private final IntakeSubsystem i_intake = new IntakeSubsystem();
 
@@ -99,8 +100,8 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        driver.b().whileTrue(drivetrain.applyRequest(() ->
+        driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
+        driver.x().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
         ));
 
@@ -112,57 +113,48 @@ public class RobotContainer {
         driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
      /* OPERATOR */
-
         /* launcher */
             operator.a()
-            .onTrue(new InstantCommand(() ->
-                l_Launch.setShooterSpeed(Constants.LauncherConstants.UpperMotorSpeedRpm,Constants.LauncherConstants.LowerMotorSpeedRpm)
-                ))
-            .onFalse(new InstantCommand(() ->
-                l_Launch.setShooterSpeed(Constants.LauncherConstants.UpperMotorSpeedRpm,Constants.LauncherConstants.LowerMotorSpeedRpm)
-                ));
+            .onTrue(new LauncherTurn(l_launch, true
+            ))
+            .onFalse(new LauncherTurn(l_launch, true
+            ));
 
                 operator.b()
-            .onTrue(new InstantCommand(() ->
-                l_Launch.setShooterSpeed(0.0,0.0)
-                ));
-            
-
-            operator.pov(0)
-                .onTrue(new ConveyerTurn (l_Launch,Constants.LauncherConstants.ConveyerMotorSpeed))
-                .onFalse(new ConveyerTurn (l_Launch,0.0));
+             .onTrue(new LauncherTurn(l_launch, false
+            ));
 
         /* index */
-            operator.rightBumper()
-                .onTrue(new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed)
+            operator.x()
+                .onTrue(new FeedinCommand(i_index, l_launch, Constants.LauncherConstants.ConveyerMotorSpeed, -Constants.IndexerConstants.kIndexMotorSpeed)
                )
-               .onFalse(new IndexerCommand(i_index, 0.0)
+               .onFalse(new FeedinCommand(i_index, l_launch, 0.0, 0.0)
                );
 
-            operator.rightTrigger()
-               .onTrue(new IndexerCommand(i_index, -Constants.IndexerConstants.kIndexMotorSpeed)
+            operator.y()
+               .onTrue(new FeedinCommand(i_index, l_launch, -Constants.LauncherConstants.ConveyerMotorSpeed, Constants.IndexerConstants.kIndexMotorSpeed)
                )
-               .onFalse(new IndexerCommand(i_index, 0.0)
+               .onFalse(new FeedinCommand(i_index, l_launch, 0.0, 0.0)
                );
         
         /* intake  */
             operator.leftBumper()
-             .onTrue(new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
+             .onTrue(new IntakeCommand(i_intake, -Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
                 )
              .onFalse(new IntakeCommand(i_intake, 0.0, 0.0)
              );
            
-             operator.leftTrigger()
-             .onTrue(new IntakeCommand(i_intake, -Constants.IntakeConstants.kUpperIntakeMotorSpeed, -Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
+             operator.rightBumper()
+             .onTrue(new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, -Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
                 )
              .onFalse(new IntakeCommand(i_intake, 0.0, 0.0)
              );
 
              
-            operator.x()
+            operator.leftTrigger()
             .onTrue(new InstantCommand(() ->
                 i_intake.turnDegrees(Constants.IntakeConstants.kRotatingMotorDegree)
                 ));
@@ -170,7 +162,7 @@ public class RobotContainer {
             //     i_intake.turnDegrees(0.0)
             //     ));
                 
-            operator.y()
+            operator.rightTrigger()
             .onTrue(new InstantCommand(() ->
                 i_intake.turnDegrees(-Constants.IntakeConstants.kRotatingMotorDegree)
                 ));

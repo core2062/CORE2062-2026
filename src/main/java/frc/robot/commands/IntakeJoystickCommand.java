@@ -19,7 +19,7 @@ public class IntakeJoystickCommand extends Command{
 
     @Override
     public void execute() {
-        double y = m_speedSupplier.getAsDouble()*Constants.IntakeConstants.kRotatingMotorDegree/* .get(0.0)*/;
+        double y = -m_speedSupplier.getAsDouble()*Constants.IntakeConstants.kRotatingMotorDegree/* .get(0.0)*/;
         if (Math.abs(y) > 0.02) {
             i_intake.turnDegrees(y);
         }
