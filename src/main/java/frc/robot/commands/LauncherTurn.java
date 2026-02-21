@@ -46,7 +46,7 @@ public LauncherTurn(LauncherSubsystem subsystem, boolean enabled) {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !m_enabled;
+    return m_enabled;
   }
 }
 

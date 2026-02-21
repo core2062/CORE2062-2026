@@ -73,7 +73,7 @@ final var slot0Configs = new Slot0Configs();
 
     SmartDashboard.putNumber("desired UpperMotorSpeed", Constants.LauncherConstants.UpperMotorSpeedRpm);
     SmartDashboard.putNumber("desired  LowerMotorSpeed", Constants.LauncherConstants.LowerMotorSpeedRpm);
-    SmartDashboard.putNumber("desired ConveyerSpeed", Constants.LauncherConstants.ConveyerMotorSpeedRpm);
+    SmartDashboard.putNumber("desired ConveyerSpeed", Constants.LauncherConstants.ConveyerMotorSpeed);
 
 }
 

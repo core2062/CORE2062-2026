@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,9 +20,16 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.Constants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 import frc.robot.constants.Constants;
 import frc.robot.commands.ConveyerTurn;
+import frc.robot.commands.IndexerCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeJoystickCommand;
 import frc.robot.commands.LauncherTurn;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -29,10 +37,11 @@ import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
     
 public class RobotContainer {
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = 0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -55,10 +64,23 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public RobotContainer() {
+
+        i_intake.setDefaultCommand(
+            new IntakeJoystickCommand(
+                i_intake, 
+                () -> operator.getRawAxis(XboxController.Axis.kLeftY.value)
+            )
+        );
+
         configureBindings();
     }
 
+    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");;
+
+
     private void configureBindings() {
+
+            SmartDashboard.putNumber("desired Max Speed", MaxSpeed);
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -93,49 +115,51 @@ public class RobotContainer {
         driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
      /* OPERATOR */
-     
+
         /* launcher */
             operator.a()
-            .onTrue(new LauncherTurn(l_Launch, true))
-            .onFalse(new LauncherTurn(l_Launch, true));
+            .onTrue(new InstantCommand(() ->
+                l_Launch.setShooterSpeed(Constants.LauncherConstants.UpperMotorSpeedRpm,Constants.LauncherConstants.LowerMotorSpeedRpm)
+                ))
+            .onFalse(new InstantCommand(() ->
+                l_Launch.setShooterSpeed(Constants.LauncherConstants.UpperMotorSpeedRpm,Constants.LauncherConstants.LowerMotorSpeedRpm)
+                ));
+
+                operator.b()
+            .onTrue(new InstantCommand(() ->
+                l_Launch.setShooterSpeed(0.0,0.0)
+                ));
+            
 
             operator.pov(0)
-                .onTrue(new ConveyerTurn (l_Launch,Constants.LauncherConstants.ConveyerMotorSpeedRpm))
+                .onTrue(new ConveyerTurn (l_Launch,Constants.LauncherConstants.ConveyerMotorSpeed))
                 .onFalse(new ConveyerTurn (l_Launch,0.0));
 
         /* index */
             operator.rightBumper()
-                .onTrue(new InstantCommand(() ->
-                i_index.setIndexerSpeed(Constants.IndexerConstants.kIndexMotorSpeed)
-               ))
-               .onFalse(new InstantCommand(() ->
-                i_index.setIndexerSpeed(0)
-               ));
+                .onTrue(new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed)
+               )
+               .onFalse(new IndexerCommand(i_index, 0.0)
+               );
 
             operator.rightTrigger()
-              .onTrue(new InstantCommand(() ->
-                i_index.setIndexerSpeed(-Constants.IndexerConstants.kIndexMotorSpeed)
-               ))
-               .onFalse(new InstantCommand(() ->
-                i_index.setIndexerSpeed(0)
-               ));
+               .onTrue(new IndexerCommand(i_index, -Constants.IndexerConstants.kIndexMotorSpeed)
+               )
+               .onFalse(new IndexerCommand(i_index, 0.0)
+               );
         
         /* intake  */
             operator.leftBumper()
-             .onTrue(new InstantCommand(() ->
-                i_intake.setIntakeSpeed(Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
-                ))
-             .onFalse(new InstantCommand(() ->
-                i_intake.setIntakeSpeed(0.0, 0.0)
-             ));
+             .onTrue(new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
+                )
+             .onFalse(new IntakeCommand(i_intake, 0.0, 0.0)
+             );
            
              operator.leftTrigger()
-             .onTrue(new InstantCommand(() ->
-                i_intake.setIntakeSpeed(-Constants.IntakeConstants.kUpperIntakeMotorSpeed,-Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
-                ))
-             .onFalse(new InstantCommand(() ->
-                i_intake.setIntakeSpeed(0.0, 0.0)
-             ));
+             .onTrue(new IntakeCommand(i_intake, -Constants.IntakeConstants.kUpperIntakeMotorSpeed, -Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
+                )
+             .onFalse(new IntakeCommand(i_intake, 0.0, 0.0)
+             );
 
              
             operator.x()
@@ -156,24 +180,13 @@ public class RobotContainer {
                        
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+         SmartDashboard.putData("Auto Mode", autoChooser);
     }
 
     public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-            // Reset our field centric heading to match the robot
-            // facing away from our alliance station wall (0 deg).
-            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-            // Then slowly drive forward (away from us) for 5 seconds.
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(0.5)
-                    .withVelocityY(0)
-                    .withRotationalRate(0)
-            )
-            .withTimeout(5.0),
-            // Finally idle for the rest of auton
-            drivetrain.applyRequest(() -> idle)
-        );
+        
+         return autoChooser.getSelected();
     }
+    
 }
