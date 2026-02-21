@@ -41,4 +41,9 @@ public final class Constants {
     public static final double kPivotMotorSpeed = 0.3;
     public static final double gearRatio = 81.0;
   }
+public static final class Swerve{
+                    public static final double maxSpeed = 4.5; //TODO: This must be tuned to specific robot
+        /** Radians per Second */
+        public static final double maxAngularVelocity = 10.0; //TODO: This must be tuned to specific robot
+    }
   }   
