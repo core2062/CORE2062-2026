@@ -25,13 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Conveyer On"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Index On"
+            "name": "Feed in"
           }
         },
         {
@@ -43,13 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Conveyer Off"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Index Off"
+            "name": "Feed off"
           }
         }
       ]

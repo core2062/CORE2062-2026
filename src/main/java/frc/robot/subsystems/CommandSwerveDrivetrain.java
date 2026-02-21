@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.ConveyerTurn;
+import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LauncherTurn;
@@ -334,7 +335,10 @@ private void configureAutoBuilder() {
         NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed));
         NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0));
         NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
+        NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, Constants.LauncherConstants.ConveyerMotorSpeed, -Constants.IndexerConstants.kIndexMotorSpeed));
+        NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 0.0, 0.0));
         NamedCommands.registerCommand("Intake Off", new IntakeCommand(i_intake, 0.0, 0.0));
+       
        
         try {
             var config = RobotConfig.fromGUISettings();
