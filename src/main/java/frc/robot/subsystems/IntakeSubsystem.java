@@ -118,12 +118,14 @@ public void turnDegrees(double degreesToTurn) {
     
     // Get current position
     double currentPos = m_RotatingMotor.getPosition().getValueAsDouble();
-    System.out.println("in turn degrees");
     // Create the request: current + desired
     PositionVoltage request = new PositionVoltage(currentPos + rotations);
-    System.out.printf("turning, rotations %f, current pos %f\n", rotations, currentPos);  
       // Send command to motor
     m_RotatingMotor.setControl(request);
+}
+
+public void setPivotSpeed(double speed) {
+    m_RotatingMotor.setControl(new DutyCycleOut(speed));
 }
 
 }

@@ -32,8 +32,9 @@ public static class IntakeConstants {
   public static final int kLowerIntakeMotorPort = 11;
   public static final int kRotatingInakeMotorPort = 12;
 
-  public static final double kUpperIntakeMotorSpeed = 0.70;
-  public static final double kLowerIntakeMotorSpeed = 0.70;
+  public static final double kUpperIntakeMotorSpeed = 0.50;
+  public static final double kLowerIntakeMotorSpeed = 0.50;
   public static final int kRotatingMotorDegree = 90;
+  public static final double kPivotMotorSpeed = 0.3;
 }
-} 
+}   
