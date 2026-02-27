@@ -6,6 +6,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -27,8 +28,8 @@ public class AimToHub extends Command {
     private PhotonCamera camera;
     private GenericHID controller;
     private final SwerveRequest.RobotCentric driveRequest = new SwerveRequest.RobotCentric();
-    private final PIDController anglePID=new PIDController(0.8, 0, 0);
-    private final PIDController drivePID=new PIDController(0.8,0,0);
+    private final PIDController anglePID=new PIDController(1, 0, 0);
+    private final PIDController drivePID=new PIDController(0.4,0,0);
     private final SlewRateLimiter fowardlimit=new SlewRateLimiter(6.0);
     private final SlewRateLimiter rotationlimit=new SlewRateLimiter(12.0);
     private double distanceToHub=0;
@@ -46,7 +47,7 @@ public class AimToHub extends Command {
     private double hubY=0;
     private double hubZ=0;
     private final Transform3d tagToHub=new Transform3d(
-        new Translation3d(-0.6096, 0.0, 0.3048), 
+        new Translation3d(-0.0, 0.0, 0.0), //X: -0.6096 Y: 0 Z: 0.3048
         new Rotation3d()
     );
     private final Transform3d robotToCamera = new Transform3d(
@@ -59,7 +60,7 @@ public class AimToHub extends Command {
         this.camera = camera;
         this.controller = controller;
         anglePID.enableContinuousInput(-Math.PI, Math.PI);
-        anglePID.setTolerance(Units.degreesToRadians(4.0));
+        anglePID.setTolerance(Units.degreesToRadians(1.0));
         drivePID.setTolerance(0.05);
         
         // This tells the robot that this command uses the drivetrain
@@ -79,25 +80,26 @@ public class AimToHub extends Command {
                 // At least one AprilTag was seen by the camera
                 for (var target : result.getTargets()) {
                     poseAmbiguity = target.getPoseAmbiguity();
-                    if(poseAmbiguity<0.4){
+                    if(poseAmbiguity<0.9){
                     if (target.getFiducialId() == 1) {
                         targetVisible = true;
                         var transform = target.getBestCameraToTarget();
                         Transform3d cameraToTarget = target.getBestCameraToTarget();
                         Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
-                        Transform3d robotToHub = robotToTarget.plus(tagToHub);
-                        double tagX=transform.getX();
-                        double tagY=transform.getY();
-                        double tagZ=transform.getZ();
-                         hubX=robotToHub.getX();
-                         hubY=robotToHub.getY();
-                         hubZ=robotToHub.getZ();
+                        Pose3d robotPose = new Pose3d(); 
+                        Pose3d hubPose = robotPose.transformBy(robotToCamera)
+                          .transformBy(cameraToTarget)
+                          .transformBy(tagToHub);
+                         hubX=hubPose.getX();
+                         hubY=hubPose.getY();
+                         hubZ=hubPose.getZ();
                         aprilTagRotation=transform.getRotation().getZ();
+                        SmartDashboard.putString("Test if photon works", "It works");
 
                            if(aprilTagRotation<0){
                                 aprilTagRotation+=Math.PI*2;
                             }
-                        aprilTagDistance=Math.sqrt(Math.pow(tagX,2)+Math.pow(tagY, 2)+Math.pow(tagZ, 2));//Distance formula
+                        //aprilTagDistance=Math.sqrt(Math.pow(tagX,2)+Math.pow(tagY, 2)+Math.pow(tagZ, 2));//Distance formula
 
                         //distanceToHub=Math.sqrt(Math.pow(distanceAprilTagToHub,2)+Math.pow(aprilTagDistance, 2)-2*distanceAprilTagToHub*aprilTagDistance*Math.cos(aprilTagRotation));//Law of cosines
                         //turnAngle=Math.asin(distanceAprilTagToHub*Math.sin(aprilTagRotation)/distanceToHub);//Law sin
@@ -115,26 +117,23 @@ public class AimToHub extends Command {
             rotationOutput = MathUtil.clamp(rotationOutput,-Constants.Swerve.maxAngularVelocity,Constants.Swerve.maxAngularVelocity);
         forward=MathUtil.clamp(forward,-Constants.Swerve.maxSpeed,Constants.Swerve.maxSpeed);
         distanceError=distanceToHubXY-targetDistance;
-}
-if(Math.abs(turnAngle)>Units.degreesToRadians(3)){
-    limitedTurn=rotationlimit.calculate(rotationOutput);
+        limitedTurn=rotationlimit.calculate(rotationOutput);
+        limitedForward=fowardlimit.calculate(forward);
 }else{
-    limitedTurn=0;
+/*limitedTurn=0;
+ * limitedForward=0;
+ */
 }
-if(Math.abs(distanceError)>0.04){
-    limitedForward=fowardlimit.calculate(forward);
-}else{
-    limitedForward=0;
-}
+
+
         s_Swerve.setControl(driveRequest.withVelocityX(0).withRotationalRate(-limitedTurn));
         SmartDashboard.putNumber("Rotation of the april tag",aprilTagRotation);
         SmartDashboard.putNumber("Finds distance to april tag", aprilTagDistance);
         SmartDashboard.putNumber("Angle to turn to the hub", Units.radiansToDegrees(rotationOutput));
         SmartDashboard.putNumber("Distance to hub", distanceToHubXY);
         SmartDashboard.putNumber("April Tag Inaccurecy",poseAmbiguity);
-        SmartDashboard.putNumber("Hub X", hubX);
-        SmartDashboard.putNumber("Hub Y", hubY);
         SmartDashboard.putNumber("Forward Photon", limitedForward);
-        SmartDashboard.putNumber("Turn photon", limitedTurn);
+        SmartDashboard.putNumber("Turn photon", -limitedTurn);
+        SmartDashboard.putNumber("Finding the rotation of april tag", turnAngle);
     }
 }
