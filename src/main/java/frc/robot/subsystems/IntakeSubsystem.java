@@ -26,21 +26,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
 
-/*2 motors run at same time, have to configure for diff directions,
- 1 button takes balls in, 1 push out, constant speed*/
-
- /*other motor up and down, one button,  */
-//81:1
-
 public class IntakeSubsystem extends SubsystemBase {
     private TalonFX m_UpperIntakeMotor = new TalonFX(Constants.IntakeConstants.kUpperIntakeMotorPort);
     private TalonFX m_LowerIntakeMotor = new TalonFX(Constants.IntakeConstants.kLowerIntakeMotorPort);
 
     private TalonFX m_RotatingMotor = new TalonFX(Constants.IntakeConstants.kRotatingInakeMotorPort);
-    public double gearRatio = 81.0;
 
     private final CANBus kCANBus = CANBus.roboRIO();
-     private final CANdi candi = new CANdi(1, kCANBus);
+     private final CANdi candi = new CANdi(0, kCANBus);
        
 
 public IntakeSubsystem(){
@@ -80,19 +73,15 @@ public IntakeSubsystem(){
         configs.Slot0.kI = 0.0;  // Integral Gain
         configs.Slot0.kD = 0.0;  // Derivative Gain
        
-// final var toApply = new CANdiConfiguration();
+final var toApply = new CANdiConfiguration();
+    toApply.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow; 
 
-//     toApply.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow; 
-//     toApply.DigitalInputs.S2CloseState = S2CloseStateValue.CloseWhenLow; // This example specifically assumes a hardware limit switch will close S2 to Ground. Default of CloseWhenNotFloating will also work
-
-//     candi.getConfigurator().apply(toApply);
+    candi.getConfigurator().apply(toApply);
     
-// final var limitConfigs = new HardwareLimitSwitchConfigs();
-//     limitConfigs.ReverseLimitSource = ReverseLimitSourceValue.RemoteCANdiS1;
-//     limitConfigs.ReverseLimitRemoteSensorID = candi.getDeviceID();
-//     limitConfigs.ReverseLimitEnable = true;
-//     limitConfigs.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
-// /
+final var limitConfigs = new HardwareLimitSwitchConfigs();
+    limitConfigs.ForwardLimitSource = ForwardLimitSourceValue.RemoteCANdiS1;
+    limitConfigs.ForwardLimitRemoteSensorID = candi.getDeviceID();
+
 
     m_UpperIntakeMotor.getConfigurator().apply(UpperIntakeMotor_configs);
     m_LowerIntakeMotor.getConfigurator().apply(LowerIntakeMotor_configs);
@@ -114,7 +103,7 @@ public void setIntakeSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
  */
 public void turnDegrees(double degreesToTurn) {
     // Calculate rotations needed
-    double rotations = (degreesToTurn / 360.0) * gearRatio;
+    double rotations = (degreesToTurn / 360.0)* Constants.IntakeConstants.gearRatio;
     
     // Get current position
     double currentPos = m_RotatingMotor.getPosition().getValueAsDouble();

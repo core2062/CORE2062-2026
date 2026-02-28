@@ -10,6 +10,7 @@ import frc.robot.constants.Constants;
 public class IntakeJoystickCommand extends Command{
     private final IntakeSubsystem i_intake;
     private final DoubleSupplier m_speedSupplier;
+    private boolean changedSpeed = false;
 
     public IntakeJoystickCommand(IntakeSubsystem subsystem, DoubleSupplier setLiftSpeed){
         i_intake = subsystem;
@@ -19,15 +20,20 @@ public class IntakeJoystickCommand extends Command{
 
     @Override
     public void execute() {
-        double y = -m_speedSupplier.getAsDouble()*Constants.IntakeConstants.kRotatingMotorDegree/* .get(0.0)*/;
+        double y = -m_speedSupplier.getAsDouble()*Constants.IntakeConstants.kPivotMotorSpeed;
         if (Math.abs(y) > 0.02) {
-            i_intake.turnDegrees(y);
+            i_intake.setPivotSpeed(y);
+            changedSpeed = true;
+        } else {
+            if (changedSpeed) {
+                i_intake.setPivotSpeed(0);
+                changedSpeed=false;
+            }
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-     i_intake.turnDegrees(0.0);
     }
 
     @Override

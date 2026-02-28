@@ -49,6 +49,9 @@ public class RobotContainer {
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+    private final SwerveRequest.RobotCentric roboDrivCentric = new SwerveRequest.RobotCentric()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Add a 10% deadband
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     
@@ -65,13 +68,6 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public RobotContainer() {
-
-        i_intake.setDefaultCommand(
-            new IntakeJoystickCommand(
-                i_intake, 
-                () -> operator.getRawAxis(XboxController.Axis.kLeftY.value)
-            )
-        );
 
         configureBindings();
     }
@@ -99,12 +95,6 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
-
-        driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
-        driver.x().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
-        ));
-
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -115,6 +105,25 @@ public class RobotContainer {
         // Reset the field-centric heading on left bumper press.
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
+    /* DRIVER */
+        /* robot centric */
+       driver.leftBumper().toggleOnTrue(drivetrain.applyRequest(() ->
+                roboDrivCentric.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                ));
+
+        driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
+
+        driver.x().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
+        ));
+
+        // Reset the field-centric heading on left bumper press.
+        driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
+
+
      /* OPERATOR */
         /* launcher */
             operator.a()
@@ -123,7 +132,7 @@ public class RobotContainer {
             .onFalse(new LauncherTurn(l_launch, true
             ));
 
-                operator.b()
+            operator.b()
              .onTrue(new LauncherTurn(l_launch, false
             ));
 
@@ -140,7 +149,7 @@ public class RobotContainer {
                .onFalse(new FeedinCommand(i_index, l_launch, 0.0, 0.0)
                );
         
-        /* intake  */
+        /* intake  */ 
             operator.leftBumper()
              .onTrue(new IntakeCommand(i_intake, -Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
                 )
@@ -148,28 +157,33 @@ public class RobotContainer {
              );
            
              operator.rightBumper()
-             .onTrue(new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, -Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
+             .onTrue(new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, -Constants.IntakeConstants.kLowerIntakeMotorSpeed)
                 )
              .onFalse(new IntakeCommand(i_intake, 0.0, 0.0)
              );
 
-             
-            operator.leftTrigger()
-            .onTrue(new InstantCommand(() ->
-                i_intake.turnDegrees(Constants.IntakeConstants.kRotatingMotorDegree)
+
+            // i_intake.setDefaultCommand(
+            //         Commands.run(
+            //             () -> i_intake.setPivotSpeed(-operator.getRawAxis(XboxController.Axis.kLeftY.value)*Constants.IntakeConstants.kPivotMotorSpeed),
+            //             i_intake
+            //         ));
+            i_intake.setDefaultCommand(
+                new IntakeJoystickCommand(
+                    i_intake, 
+                    () -> operator.getRawAxis(XboxController.Axis.kLeftY.value)
                 ));
-            // .onFalse(new InstantCommand(() ->
-            //     i_intake.turnDegrees(0.0)
-            //     ));
-                
-            operator.rightTrigger()
-            .onTrue(new InstantCommand(() ->
-                i_intake.turnDegrees(-Constants.IntakeConstants.kRotatingMotorDegree)
+
+            operator.pov(0)
+            .whileTrue(new InstantCommand(() ->
+                i_intake.turnDegrees(Constants.IntakeConstants.kPivotMotorDegree), i_intake));
+        
+
+            operator.pov(180)
+            .whileTrue(new InstantCommand(() ->
+                i_intake.turnDegrees(-Constants.IntakeConstants.kPivotMotorDegree), i_intake
                 ));
-            // .onFalse(new InstantCommand(() ->
-            //     i_intake.turnDegrees(0.0)
-            //     ));
-                       
+            
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

@@ -12,6 +12,7 @@ public final class Constants {
   public static class JoystickConstants {
     public static final int kDriverControllerPort = 0;
   }
+
   public static class LauncherConstants {
     public static final int UpperMotorPort = 14; 
     public static final int LowerMotorPort = 13; 
@@ -20,21 +21,24 @@ public final class Constants {
      public static final double UpperMotorSpeedRpm = 2150;
         public static final double LowerMotorSpeedRpm  = 1150;
         public static final double ConveyerMotorSpeed = 0.3;
-    //lower motor double the speed top
-}
-public static class IndexerConstants {
-  public static final int kIndexMotorPort = 16;
+  }
 
-public static final double kIndexMotorSpeed = 0.30;
-}
-public static class IntakeConstants {
-  public static final int kUpperIntakeMotorPort = 10;
-  public static final int kLowerIntakeMotorPort = 11;
-  public static final int kRotatingInakeMotorPort = 12;
+  public static class IndexerConstants {
+    public static final int kIndexMotorPort = 16;
 
-  public static final double kUpperIntakeMotorSpeed = 0.50;
-  public static final double kLowerIntakeMotorSpeed = 0.50;
-  public static final int kRotatingMotorDegree = 90;
-  public static final double kPivotMotorSpeed = 0.3;
-}
-}   
+  public static final double kIndexMotorSpeed = 0.30;
+  }
+
+  public static class IntakeConstants {
+    public static final int kUpperIntakeMotorPort = 10;
+    public static final int kLowerIntakeMotorPort = 11;
+    public static final int kRotatingInakeMotorPort = 12;
+    public static final int kCANDiport = 0;
+
+    public static final double kUpperIntakeMotorSpeed = 0.50;
+    public static final double kLowerIntakeMotorSpeed = 0.50;
+    public static final int kPivotMotorDegree = 90;
+    public static final double kPivotMotorSpeed = 0.3;
+    public static final double gearRatio = 81.0;
+  }
+  }   
