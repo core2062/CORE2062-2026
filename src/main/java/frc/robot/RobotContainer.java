@@ -108,7 +108,7 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
         ));
         hubAligner.whileTrue(new AimToHub(drivetrain,
-                                            pv_PhotonVisionSubsystem.getCamera(),
+                                            pv_PhotonVisionSubsystem,
                                             driver.getHID()
                                             ));
         // Run SysId routines when holding back/start and X/Y.
