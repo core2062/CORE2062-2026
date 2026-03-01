@@ -22,6 +22,7 @@ import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S1FloatStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -88,7 +89,10 @@ final var limitConfigs = new HardwareLimitSwitchConfigs();
     m_RotatingMotor.getConfigurator().apply(RotatingMotor_configs);
     m_RotatingMotor.getConfigurator().apply(configs);
     // m_RotatingMotor.getConfigurator().apply(limitConfigs);
-    }
+
+    SmartDashboard.putNumber(Constants.IntakeConstants.upperIntake, Constants.IntakeConstants.kUpperIntakeMotorSpeed);
+    SmartDashboard.putNumber(Constants.IntakeConstants.lowerIntake, Constants.IntakeConstants.kLowerIntakeMotorSpeed);
+}
 
 
 public void setIntakeSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){

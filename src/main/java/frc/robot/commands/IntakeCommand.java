@@ -19,6 +19,7 @@ public class IntakeCommand extends Command {
 
     @Override
     public void execute() {
+        System.out.printf("upperSpeed: %f, lowerSpeed: %f\n", upperSpeed, lowerSpeed);
         i_intake.setIntakeSpeed(upperSpeed, lowerSpeed);
     }
     @Override

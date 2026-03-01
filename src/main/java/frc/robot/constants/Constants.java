@@ -20,13 +20,13 @@ public final class Constants {
 
      public static final double UpperMotorSpeedRpm = 2150;
         public static final double LowerMotorSpeedRpm  = 1150;
-        public static final double ConveyerMotorSpeed = 0.3;
+        public static final double ConveyerMotorSpeed = 0.5;
   }
 
   public static class IndexerConstants {
     public static final int kIndexMotorPort = 16;
 
-  public static final double kIndexMotorSpeed = 0.30;
+  public static final double kIndexMotorSpeed = 0.50;
   }
 
   public static class IntakeConstants {
@@ -35,10 +35,13 @@ public final class Constants {
     public static final int kRotatingInakeMotorPort = 12;
     public static final int kCANDiport = 0;
 
-    public static final double kUpperIntakeMotorSpeed = 0.50;
-    public static final double kLowerIntakeMotorSpeed = 0.50;
+    public static final double kUpperIntakeMotorSpeed = 0.5;
+    public static final double kLowerIntakeMotorSpeed = 0.5;
     public static final int kPivotMotorDegree = 90;
     public static final double kPivotMotorSpeed = 0.3;
     public static final double gearRatio = 81.0;
+
+    public static final String upperIntake = "Upper Intake Speed";
+    public static final String lowerIntake = "Lower Intake Speed";
   }
   }   
