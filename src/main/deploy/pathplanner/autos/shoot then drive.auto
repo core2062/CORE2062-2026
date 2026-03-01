@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Drive Through Right Trench to Field"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Launcher On"
@@ -31,13 +25,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 15.0
+            "waitTime": 3.0
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Feed off"
+            "pathName": "Drive Through Right Trench to Field"
           }
         }
       ]
