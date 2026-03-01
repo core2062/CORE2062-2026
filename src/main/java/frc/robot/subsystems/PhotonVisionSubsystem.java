@@ -38,7 +38,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         new Rotation3d()
     );
     private final Transform3d robotToCamera = new Transform3d(
-    new Translation3d(0.0, 0.0, 0.0), // X, Y, Z in meters
+    new Translation3d(0.0, 0, 0.0), // X, Y, Z in meters
     new Rotation3d(0, 0, Math.PI/2)  // Rotated 90 degrees (left)
 );
     private final PhotonCamera camera = new PhotonCamera("regArducam2062");

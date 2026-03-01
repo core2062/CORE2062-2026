@@ -67,8 +67,8 @@ public class AimToHub extends Command {
         this.p_vision = p_vision;
         this.controller = controller;
         anglePID.enableContinuousInput(-Math.PI, Math.PI);
-        anglePID.setTolerance(Units.degreesToRadians(2.0));
-        drivePID.setTolerance(0.05);
+        anglePID.setTolerance(Units.degreesToRadians(0.75));
+        drivePID.setTolerance(0.02);
         
         // This tells the robot that this command uses the drivetrain
         addRequirements(s_Swerve,p_vision);
@@ -126,7 +126,7 @@ public class AimToHub extends Command {
         }*/
         
            if (p_vision.hasTarget()==true) {
-            final double targetDistance=3; // in meters
+            final double targetDistance=3.9624; // in meters
             double turnAngle=0;
             turnAngle=p_vision.getAngleToHub();
             double distanceToHubXY=0;
@@ -135,6 +135,7 @@ public class AimToHub extends Command {
             forward=drivePID.calculate(distanceToHubXY, targetDistance)*Constants.Swerve.maxSpeed;
             if (anglePID.atSetpoint()) {
         rotationOutput = 0;
+        System.out.print(distanceToHubXY);
     }
     if (drivePID.atSetpoint()) {
         forward = 0;
