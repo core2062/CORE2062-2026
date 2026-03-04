@@ -35,6 +35,7 @@ import frc.robot.commands.ConveyerTurn;
 import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeRotate;
 import frc.robot.commands.LauncherTurn;
 import frc.robot.constants.Constants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -338,6 +339,7 @@ private void configureAutoBuilder() {
         NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, Constants.LauncherConstants.ConveyerMotorSpeed, -Constants.IndexerConstants.kIndexMotorSpeed));
         NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 0.0, 0.0));
         NamedCommands.registerCommand("Intake Off", new IntakeCommand(i_intake, 0.0, 0.0));
+        NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
        
        
         try {

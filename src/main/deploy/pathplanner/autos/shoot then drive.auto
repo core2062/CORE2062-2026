@@ -33,6 +33,12 @@
           "data": {
             "pathName": "Drive Through Right Trench to Field"
           }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 10.0
+          }
         }
       ]
     }
