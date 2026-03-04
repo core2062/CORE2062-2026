@@ -45,21 +45,27 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     public PhotonCamera getCamera(){
         return camera;
     }
+private boolean isValidId(int id) {
+    return (id == 10 || id == 5 || id == 2 || id == 26 || id == 18 || id == 21);
+}
     @Override 
     public void periodic(){
+        targetVisible=false;
          var results = camera.getAllUnreadResults();
                 if (!results.isEmpty()) {
             // Camera processed a new frame since last
             // Get the last one in the list.
             var result = results.get(results.size() - 1);
             
+            
             if (result.hasTargets()) {
                 // At least one AprilTag was seen by the camera
                 for (var target : result.getTargets()) {
+                    int id=target.getFiducialId();
                     
                     poseAmbiguity = target.getPoseAmbiguity();
-                    if(poseAmbiguity<0.5){
-                    if (target.getFiducialId() == 1) {
+                    if (isValidId(id)&&poseAmbiguity<0.5) {
+                        //System.out.println("The tracked april tag is tag ID"+ target.getFiducialId());
                         targetVisible = true;
                         var transform = target.getBestCameraToTarget();
                         Transform3d cameraToTarget = target.getBestCameraToTarget();
@@ -81,12 +87,15 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                         //turnAngle=Math.asin(distanceAprilTagToHub*Math.sin(aprilTagRotation)/distanceToHub);//Law sin
                         distanceToHubXY=Math.sqrt(Math.pow(hubX, 2)+Math.pow(hubY, 2));
                         turnAngle=Math.atan2(hubY, hubX)-(Math.PI/2);
+                        break;
+                    }else{
+                        turnAngle=0;
                     }
-                }
                 }
             }
         }
     }
+
         public boolean hasTarget() { 
         return targetVisible; 
     }

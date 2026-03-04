@@ -145,13 +145,10 @@ public class AimToHub extends Command {
         limitedTurn=rotationlimit.calculate(rotationOutput);
         limitedForward=fowardlimit.calculate(forward);
 }else{
-    /*hubX = 0; 
-    hubY = 0; 
-    turnAngle = 0;
-    limitedTurn = 0; 
-    limitedForward = 0;
-    rotationlimit.reset(0); 
-    fowardlimit.reset(0);*/
+    /*limitedTurn = limitedTurn*0.8; 
+    limitedForward = limitedForward*0.8;
+    rotationlimit.reset(limitedTurn); 
+    fowardlimit.reset(limitedForward);*/
 }
 //System.out.printf("rotationOutput: %f, limitedTurn: %f, limitedForward %f\n", rotationOutput, limitedTurn, limitedForward);
 
