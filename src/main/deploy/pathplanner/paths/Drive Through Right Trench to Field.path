@@ -47,26 +47,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Feed off",
-      "waypointRelativePos": 0.228287841191067,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "Intake Down",
-      "waypointRelativePos": 0.3116625310173742,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "Intake On",
-      "waypointRelativePos": 0.4823821339950247,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
