@@ -35,9 +35,9 @@ public final class Constants {
     public static final int kRotatingInakeMotorPort = 12;
     public static final int kCANDiport = 0;
 
-    public static final double kUpperIntakeMotorSpeed = 0.65;
-    public static final double kLowerIntakeMotorSpeed = 0.65;
-    public static final int kPivotMotorDegree = 90;
+    public static final double kUpperIntakeMotorSpeed = 0.5;
+    public static final double kLowerIntakeMotorSpeed = 0.5;
+    public static final int kPivotMotorDegree = 115;
     public static final double kPivotMotorSpeed = 0.3;
     public static final double gearRatio = 81.0;
   }
