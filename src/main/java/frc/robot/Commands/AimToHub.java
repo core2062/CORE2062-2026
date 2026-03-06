@@ -36,6 +36,9 @@ public class AimToHub extends Command {
     private final SlewRateLimiter rotationlimit=new SlewRateLimiter(12.0);
     private double limitedForward=0;
     private double limitedTurn=0;
+    private double hubX=0;
+    private double hubY=0;
+    
     
     
     /*private double distanceToHub=0;
@@ -76,8 +79,8 @@ public class AimToHub extends Command {
     @Override
     public void execute(){
        
-        double forward = -controller.getRawAxis(1) * Constants.Swerve.maxSpeed;
-        double rotationOutput = -controller.getRawAxis(4) * Constants.Swerve.maxAngularVelocity;
+        double forward = -MathUtil.applyDeadband(controller.getRawAxis(1),0.1) * Constants.Swerve.maxSpeed;
+        double rotationOutput = -MathUtil.applyDeadband(controller.getRawAxis(4),0.1) * Constants.Swerve.maxAngularVelocity;
 
         /*boolean targetVisible = false;
         hubX = 0;
@@ -125,14 +128,17 @@ public class AimToHub extends Command {
             }
         }*/
         
-           if (p_vision.hasTarget()==true) {
+           if (p_vision.getTarget()==true) {
             final double targetDistance=3.9624; // in meters
+            hubX = p_vision.getHubLocation().getX();
+            hubY = p_vision.getHubLocation().getY();
             double turnAngle=0;
             turnAngle=p_vision.getAngleToHub();
             double distanceToHubXY=0;
             distanceToHubXY=p_vision.getDistanceToHub();
             rotationOutput=anglePID.calculate(turnAngle,0)*Constants.Swerve.maxAngularVelocity;
             forward=drivePID.calculate(distanceToHubXY, targetDistance)*Constants.Swerve.maxSpeed;
+            
             if (anglePID.atSetpoint()) {
         rotationOutput = 0;
         System.out.print(distanceToHubXY);
@@ -142,15 +148,16 @@ public class AimToHub extends Command {
     }
             rotationOutput = MathUtil.clamp(rotationOutput,-Constants.Swerve.maxAngularVelocity,Constants.Swerve.maxAngularVelocity);
         forward=MathUtil.clamp(forward,-Constants.Swerve.maxSpeed,Constants.Swerve.maxSpeed);
-        limitedTurn=rotationlimit.calculate(rotationOutput);
-        limitedForward=fowardlimit.calculate(forward);
+
 }else{
     /*limitedTurn = limitedTurn*0.8; 
     limitedForward = limitedForward*0.8;
     rotationlimit.reset(limitedTurn); 
     fowardlimit.reset(limitedForward);*/
 }
-//System.out.printf("rotationOutput: %f, limitedTurn: %f, limitedForward %f\n", rotationOutput, limitedTurn, limitedForward);
+System.out.printf("hub X: %f, hub Y: %f, rotationOutput: %f, limitedTurn: %f, limitedForward %f\n",hubX, hubY, rotationOutput, limitedTurn, limitedForward);
+        limitedTurn=rotationlimit.calculate(rotationOutput);
+        limitedForward=fowardlimit.calculate(forward);
 
         s_Swerve.setControl(driveRequest.withVelocityY(-limitedForward).withRotationalRate(-limitedTurn));
         /* 

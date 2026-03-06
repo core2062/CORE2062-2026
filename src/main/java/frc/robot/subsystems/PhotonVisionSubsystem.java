@@ -96,7 +96,7 @@ private boolean isValidId(int id) {
         }
     }
 
-        public boolean hasTarget() { 
+        public boolean getTarget() { 
         return targetVisible; 
     }
     public double getDistanceToHub() {
@@ -105,6 +105,9 @@ private boolean isValidId(int id) {
     public double getAngleToHub() { 
         return turnAngle; 
     }
+    public Translation2d getHubLocation() {
+    return new Translation2d(hubX, hubY);
+}
 /* 
     public void processVision(){
 
