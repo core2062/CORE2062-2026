@@ -20,13 +20,13 @@ public final class Constants {
 
      public static final double UpperMotorSpeedRpm = 2150;
         public static final double LowerMotorSpeedRpm  = 1150;
-        public static final double ConveyerMotorSpeed = 0.3;
+        public static final double ConveyerMotorSpeed = 0.5;
   }
 
   public static class IndexerConstants {
     public static final int kIndexMotorPort = 16;
 
-  public static final double kIndexMotorSpeed = 0.30;
+  public static final double kIndexMotorSpeed = 0.50;
   }
 
   public static class IntakeConstants {
