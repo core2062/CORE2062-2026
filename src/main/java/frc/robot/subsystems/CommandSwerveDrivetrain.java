@@ -335,7 +335,7 @@ private void configureAutoBuilder() {
         NamedCommands.registerCommand("Conveyer Off", new ConveyerTurn(l_launch,0.0));
         NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed));
         NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0));
-        NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
+        NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,-Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
         NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, Constants.LauncherConstants.ConveyerMotorSpeed, -Constants.IndexerConstants.kIndexMotorSpeed));
         NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index, l_launch, Constants.LauncherConstants.ConveyerMotorSpeed, -Constants.IndexerConstants.kIndexMotorSpeed));
         NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 0.0, 0.0));

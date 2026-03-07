@@ -126,7 +126,7 @@ public class AimToHub extends Command {
         }*/
         
            if (p_vision.hasTarget()==true) {
-            final double targetDistance=4.2672; // in meters
+            final double targetDistance=3.9624; // in meters
             double turnAngle=0;
             turnAngle=p_vision.getAngleToHub();
             double distanceToHubXY=0;
