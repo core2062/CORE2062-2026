@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Down"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake On"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot run"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Launcher On"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot run turn"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Feed in"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

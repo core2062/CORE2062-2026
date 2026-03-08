@@ -18,8 +18,8 @@ public final class Constants {
     public static final int LowerMotorPort = 13; 
     public static final int ConveyerMotorPort = 15; 
 
-     public static final double UpperMotorSpeedRpm = 2150;
-        public static final double LowerMotorSpeedRpm  = 1150;
+     public static final double UpperMotorSpeedRpm = 2050;
+        public static final double LowerMotorSpeedRpm  = 1050;
         public static final double ConveyerMotorSpeed = 0.5;
   }
 

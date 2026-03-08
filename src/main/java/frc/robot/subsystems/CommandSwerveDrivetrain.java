@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AimToHub;
+import frc.robot.commands.AimToHubAuto;
 import frc.robot.commands.ConveyerTurn;
 import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
@@ -38,6 +40,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeRotate;
 import frc.robot.commands.LauncherTurn;
 import frc.robot.constants.Constants;
+import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 
@@ -72,6 +75,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final LauncherSubsystem l_launch = new LauncherSubsystem ();
     private final IntakeSubsystem i_intake = new IntakeSubsystem ();
     private final IndexerSubsystem i_index = new IndexerSubsystem ();
+
 
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
@@ -342,7 +346,7 @@ private void configureAutoBuilder() {
         NamedCommands.registerCommand("Intake off", new IntakeCommand(i_intake, 0.0, 0.0));
         NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
-       
+
        
         try {
             var config = RobotConfig.fromGUISettings();
