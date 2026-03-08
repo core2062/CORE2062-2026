@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
@@ -23,20 +25,19 @@ public class LauncherSubsystem extends SubsystemBase {
   private TalonFX m_LowerShootMotor = new TalonFX(Constants.LauncherConstants.LowerMotorPort);
   private double updatedUpperRPM=Constants.LauncherConstants.UpperMotorSpeedRpm;
   private double updatedLowerRPM=Constants.LauncherConstants.LowerMotorSpeedRpm;
-
     @Override
     public void periodic() {
         double dashUpper = SmartDashboard.getNumber("desired UpperMotorSpeed", updatedUpperRPM);
         double dashLower = SmartDashboard.getNumber("desired LowerMotorSpeed", updatedLowerRPM);
 
     if (dashUpper != updatedUpperRPM){
-     updatedUpperRPM = dashUpper;
+      updatedUpperRPM = dashUpper;
     }
     if (dashLower != updatedLowerRPM){
-     updatedLowerRPM = dashLower;
+      updatedLowerRPM = dashLower;
     }
   }
-    
+  
   
   public void adjustShootSpeed(int changeShootSpeed){
     if ((updatedUpperRPM>100) && (updatedLowerRPM>100) && (changeShootSpeed<0)) {
@@ -52,6 +53,11 @@ public class LauncherSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("desired UpperMotorSpeed", updatedUpperRPM);
       SmartDashboard.putNumber("desired LowerMotorSpeed", updatedLowerRPM);
     }
+    Double currentSpeedUpperMotor=m_UpperShootMotor.getRotorVelocity().getValue().in(RadiansPerSecond);
+    if(Math.abs(currentSpeedUpperMotor) > 0.0){
+      setShooterSpeed(updatedUpperRPM/60.0, updatedLowerRPM/60.0);
+    }
+
   }
 
 public double getUpperTargetRPM() {
