@@ -39,10 +39,19 @@ public class LauncherSubsystem extends SubsystemBase {
     
   
   public void adjustShootSpeed(int changeShootSpeed){
-    updatedUpperRPM+=changeShootSpeed;
-    updatedLowerRPM+=changeShootSpeed;
-    SmartDashboard.putNumber("desired UpperMotorSpeed", updatedUpperRPM);
-    SmartDashboard.putNumber("desired LowerMotorSpeed", updatedLowerRPM);
+    if ((updatedUpperRPM>100) && (updatedLowerRPM>100) && (changeShootSpeed<0)) {
+      // this is for decreasing speed
+      updatedUpperRPM+=changeShootSpeed;
+      updatedLowerRPM+=changeShootSpeed;
+      SmartDashboard.putNumber("desired UpperMotorSpeed", updatedUpperRPM);
+      SmartDashboard.putNumber("desired LowerMotorSpeed", updatedLowerRPM);
+    }else if((updatedUpperRPM>100) && (updatedLowerRPM>0) && (changeShootSpeed>0)){
+      // this is for increasing speed
+      updatedUpperRPM+=changeShootSpeed;
+      updatedLowerRPM+=changeShootSpeed;
+      SmartDashboard.putNumber("desired UpperMotorSpeed", updatedUpperRPM);
+      SmartDashboard.putNumber("desired LowerMotorSpeed", updatedLowerRPM);
+    }
   }
 
 public double getUpperTargetRPM() {
@@ -104,7 +113,7 @@ final var slot0Configs = new Slot0Configs();
 
 
     SmartDashboard.putNumber("desired UpperMotorSpeed", Constants.LauncherConstants.UpperMotorSpeedRpm);
-    SmartDashboard.putNumber("desired  LowerMotorSpeed", Constants.LauncherConstants.LowerMotorSpeedRpm);
+    SmartDashboard.putNumber("desired LowerMotorSpeed", Constants.LauncherConstants.LowerMotorSpeedRpm);
     SmartDashboard.putNumber("desired ConveyerSpeed", Constants.LauncherConstants.ConveyerMotorSpeed);
 
 }
