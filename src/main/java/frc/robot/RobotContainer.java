@@ -84,6 +84,7 @@ public class RobotContainer {
 
     private void configureBindings() {
             setMaxSpeed(false);
+            changeLauncherSpeed(0);
             SmartDashboard.putNumber("desired Max Speed", MaxSpeed);
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -192,13 +193,17 @@ public class RobotContainer {
             operator.pov(0)
             .whileTrue(new InstantCommand(() ->
                 i_intake.turnDegrees(Constants.IntakeConstants.kPivotMotorDegree), i_intake));
+
+            operator.pov(90)//Speed up laucher
+            .onTrue(new InstantCommand(() ->changeLauncherSpeed(1)));
         
 
             operator.pov(180)
             .whileTrue(new InstantCommand(() ->
                 i_intake.turnDegrees(-Constants.IntakeConstants.kPivotMotorDegree), i_intake
                 ));
-            
+            operator.pov(270) //Slow down launcher
+            .onTrue(new InstantCommand(() ->changeLauncherSpeed(2)));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -213,6 +218,14 @@ public class RobotContainer {
             MaxSpeed = 0.65 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
             MaxAngularRate = 1.0*RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
         }
+    }
+    private void changeLauncherSpeed(int adjustLaucherSpeed){
+        if(adjustLaucherSpeed==1){
+            l_launch.adjustShootSpeed(100);
+        }else if(adjustLaucherSpeed==2){
+            l_launch.adjustShootSpeed(-100);
+        }
+
     }
     public Command getAutonomousCommand() {
         

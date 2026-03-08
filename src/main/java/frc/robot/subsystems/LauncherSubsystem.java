@@ -18,8 +18,40 @@ import frc.robot.constants.Constants;
 
 
 public class LauncherSubsystem extends SubsystemBase {
+
   private TalonFX m_UpperShootMotor = new TalonFX(Constants.LauncherConstants.UpperMotorPort);
   private TalonFX m_LowerShootMotor = new TalonFX(Constants.LauncherConstants.LowerMotorPort);
+  private double updatedUpperRPM=Constants.LauncherConstants.UpperMotorSpeedRpm;
+  private double updatedLowerRPM=Constants.LauncherConstants.LowerMotorSpeedRpm;
+
+    @Override
+    public void periodic() {
+        double dashUpper = SmartDashboard.getNumber("desired UpperMotorSpeed", updatedUpperRPM);
+        double dashLower = SmartDashboard.getNumber("desired LowerMotorSpeed", updatedLowerRPM);
+
+    if (dashUpper != updatedUpperRPM){
+     updatedUpperRPM = dashUpper;
+    }
+    if (dashLower != updatedLowerRPM){
+     updatedLowerRPM = dashLower;
+    }
+  }
+    
+  
+  public void adjustShootSpeed(int changeShootSpeed){
+    updatedUpperRPM+=changeShootSpeed;
+    updatedLowerRPM+=changeShootSpeed;
+    SmartDashboard.putNumber("desired UpperMotorSpeed", updatedUpperRPM);
+    SmartDashboard.putNumber("desired LowerMotorSpeed", updatedLowerRPM);
+  }
+
+public double getUpperTargetRPM() {
+    return updatedUpperRPM;
+}
+
+public double getLowerTargetRPM() {
+    return updatedLowerRPM;
+}
 
   private TalonFX m_ConveyerMotor = new TalonFX(Constants.LauncherConstants.ConveyerMotorPort);
  
