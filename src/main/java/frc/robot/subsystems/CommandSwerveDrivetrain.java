@@ -345,7 +345,9 @@ private void configureAutoBuilder() {
         NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 0.0, 0.0));
         NamedCommands.registerCommand("Intake off", new IntakeCommand(i_intake, 0.0, 0.0));
         NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
 
        
         try {
