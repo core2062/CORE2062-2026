@@ -148,16 +148,15 @@ public class AimToHub extends Command {
     }
             rotationOutput = MathUtil.clamp(rotationOutput,-Constants.Swerve.maxAngularVelocity,Constants.Swerve.maxAngularVelocity);
         forward=MathUtil.clamp(forward,-Constants.Swerve.maxSpeed,Constants.Swerve.maxSpeed);
-
+        limitedTurn=rotationlimit.calculate(rotationOutput);
+        limitedForward=fowardlimit.calculate(forward);
 }else{
     /*limitedTurn = limitedTurn*0.8; 
     limitedForward = limitedForward*0.8;
     rotationlimit.reset(limitedTurn); 
     fowardlimit.reset(limitedForward);*/
 }
-System.out.printf("hub X: %f, hub Y: %f, rotationOutput: %f, limitedTurn: %f, limitedForward %f\n",hubX, hubY, rotationOutput, limitedTurn, limitedForward);
-        limitedTurn=rotationlimit.calculate(rotationOutput);
-        limitedForward=fowardlimit.calculate(forward);
+//System.out.printf("hub X: %f, hub Y: %f, rotationOutput: %f, limitedTurn: %f, limitedForward %f\n",hubX, hubY, rotationOutput, limitedTurn, limitedForward);
 
         s_Swerve.setControl(driveRequest.withVelocityY(-limitedForward).withRotationalRate(-limitedTurn));
         /* 
