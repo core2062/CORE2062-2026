@@ -71,13 +71,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-    /* Subsystems */
-    private final LauncherSubsystem l_launch = new LauncherSubsystem ();
-    private final IntakeSubsystem i_intake = new IntakeSubsystem ();
-    private final IndexerSubsystem i_index = new IndexerSubsystem ();
-
-
-
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
         new SysIdRoutine.Config(
@@ -333,23 +326,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 private void configureAutoBuilder() {
         // Load the RobotConfig fromt he GUI settings. You should probably store this in your Constants file
-        NamedCommands.registerCommand("Launcher On", new LauncherTurn(l_launch, true));
-        NamedCommands.registerCommand("Launcher Off", new LauncherTurn(l_launch, false));
-        NamedCommands.registerCommand("Conveyer On", new ConveyerTurn(l_launch, Constants.LauncherConstants.ConveyerMotorSpeed));
-        NamedCommands.registerCommand("Conveyer Off", new ConveyerTurn(l_launch,0.0));
-        NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed));
-        NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0));
-        NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,-Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
-        NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, Constants.LauncherConstants.ConveyerMotorSpeed, -Constants.IndexerConstants.kIndexMotorSpeed));
-        NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index, l_launch, Constants.LauncherConstants.ConveyerMotorSpeed, -Constants.IndexerConstants.kIndexMotorSpeed));
-        NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 0.0, 0.0));
-        NamedCommands.registerCommand("Intake off", new IntakeCommand(i_intake, 0.0, 0.0));
-        NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
-        NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
-        NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
-        NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
-
-       
         try {
             var config = RobotConfig.fromGUISettings();
             

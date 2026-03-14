@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,6 +35,7 @@ import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeJoystickCommand;
+import frc.robot.commands.IntakeRotate;
 import frc.robot.commands.LauncherTurn;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -72,14 +74,18 @@ public class RobotContainer {
     private final PhotonVisionSubsystem pv_PhotonVisionSubsystem = new PhotonVisionSubsystem();
     
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
+    public final CommandSwerveDrivetrain drivetrain;
+    private final SendableChooser<Command> autoChooser;
+    
     public RobotContainer() {
-
+        
+        defineAutoCommands();
+        drivetrain = TunerConstants.createDrivetrain();
+        autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");
+        
         configureBindings();
     }
 
-    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");;
 
 
     private void configureBindings() {
@@ -154,16 +160,12 @@ public class RobotContainer {
 
         /* index */
             operator.x()
-                .onTrue(new FeedinCommand(i_index, l_launch, Constants.LauncherConstants.ConveyerMotorSpeed, -Constants.IndexerConstants.kIndexMotorSpeed)
-               )
-               .onFalse(new FeedinCommand(i_index, l_launch, 0.0, 0.0)
-               );
+                .onTrue(new FeedinCommand(i_index, l_launch, Constants.Mode.FORWARD))
+                .onFalse(new FeedinCommand(i_index, l_launch, Constants.Mode.OFF));
 
             operator.y()
-               .onTrue(new FeedinCommand(i_index, l_launch, -Constants.LauncherConstants.ConveyerMotorSpeed, Constants.IndexerConstants.kIndexMotorSpeed)
-               )
-               .onFalse(new FeedinCommand(i_index, l_launch, 0.0, 0.0)
-               );
+               .onTrue(new FeedinCommand(i_index, l_launch, Constants.Mode.BACKWARD))
+               .onFalse(new FeedinCommand(i_index, l_launch, Constants.Mode.OFF));
         
         /* intake  */ 
             operator.leftBumper()
@@ -232,4 +234,21 @@ public class RobotContainer {
          return autoChooser.getSelected();
     }
     
+    private void defineAutoCommands() {
+        NamedCommands.registerCommand("Launcher On", new LauncherTurn(l_launch, true));
+        NamedCommands.registerCommand("Launcher Off", new LauncherTurn(l_launch, false));
+        NamedCommands.registerCommand("Conveyer On", new ConveyerTurn(l_launch, Constants.LauncherConstants.ConveyerMotorSpeed));
+        NamedCommands.registerCommand("Conveyer Off", new ConveyerTurn(l_launch,0.0));
+        NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed));
+        NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0));
+        NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,-Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
+        NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, Constants.Mode.FORWARD));
+        NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index, l_launch, Constants.Mode.FORWARD));
+        NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, Constants.Mode.OFF));
+        NamedCommands.registerCommand("Intake off", new IntakeCommand(i_intake, 0.0, 0.0));
+        NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
+    }
 }

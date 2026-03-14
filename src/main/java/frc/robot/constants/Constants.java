@@ -9,6 +9,12 @@ package frc.robot.constants;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public enum Mode {
+    FORWARD,
+    BACKWARD,
+    OFF
+  }
+
   public static class JoystickConstants {
     public static final int kDriverControllerPort = 0;
   }
@@ -18,15 +24,27 @@ public final class Constants {
     public static final int LowerMotorPort = 13; 
     public static final int ConveyerMotorPort = 15; 
 
-     public static final double UpperMotorSpeedRpm = 2050;
-        public static final double LowerMotorSpeedRpm  = 1050;
-        public static final double ConveyerMotorSpeed = 0.5;
+    public static final double UpperMotorSpeedRpm = 2050;
+    public static final double LowerMotorSpeedRpm  = 1050;
+    public static final double ConveyerMotorSpeed = 0.75;
+    public static final double kForward = 1.0;
+    public static final double kBackward = -1.0;
+    public static final double kOff = 0.0;
+    
+    public static final String upperMotorString = "desired UpperMotorSpeed";
+    public static final String lowerMotorString = "desired LowerMotorSpeed";
+    public static final String converyMotorString = "desired ConveyerSpeed";
   }
-
+  
   public static class IndexerConstants {
     public static final int kIndexMotorPort = 16;
+    
+    public static final double kIndexMotorSpeed = 0.75;
+    public static final double kForward = -1.0;
+    public static final double kBackward = 1.0;
+    public static final double kOff = 1.0;
 
-  public static final double kIndexMotorSpeed = 0.50;
+    public static final String indexerSpeedString = "Indexer Speed";
   }
 
   public static class IntakeConstants {
@@ -42,9 +60,9 @@ public final class Constants {
     public static final double gearRatio = 81.0;
   }
 public static final class Swerve{
-                    public static final double maxSpeed = 2.195; //TODO: This must be tuned to specific robot
-        /** Radians per Second */
-        public static final double maxAngularVelocity = Math.PI*3/2; //TODO: This must be tuned to specific robot
+    public static final double maxSpeed = 2.195; //TODO: This must be tuned to specific robot
+    /** Radians per Second */
+    public static final double maxAngularVelocity = Math.PI*3/2; //TODO: This must be tuned to specific robot
         
     }
   }   

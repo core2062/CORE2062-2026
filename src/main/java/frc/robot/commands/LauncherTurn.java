@@ -30,8 +30,8 @@ public LauncherTurn(LauncherSubsystem subsystem, boolean enabled) {
     double lowerMotorRps;
 
     if (m_enabled) {
-      upperMotorRps = SmartDashboard.getNumber("desired UpperMotorSpeed", l_launch.getUpperTargetRPM()) / 60.0;
-      lowerMotorRps = SmartDashboard.getNumber("desired LowerMotorSpeed", l_launch.getLowerTargetRPM()) / 60.0;
+      upperMotorRps = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, l_launch.getUpperTargetRPM()) / 60.0;
+      lowerMotorRps = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, l_launch.getLowerTargetRPM()) / 60.0;
     } else {
      upperMotorRps  = 0.0;
      lowerMotorRps = 0.0;
