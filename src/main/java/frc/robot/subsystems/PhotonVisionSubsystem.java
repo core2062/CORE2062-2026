@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.List; 
@@ -77,7 +78,7 @@ private boolean isValidId(int id) {
                          hubX=hubPose.getX();
                          hubY=hubPose.getY();
                          hubZ=hubPose.getZ();
-                        aprilTagRotation=transform.getRotation().getZ();
+                         aprilTagRotation=transform.getRotation().getZ();
                            if(aprilTagRotation<0){
                                 aprilTagRotation+=Math.PI*2;
                             }
@@ -94,7 +95,8 @@ private boolean isValidId(int id) {
                 }
             }
         }
-    }
+            SmartDashboard.putNumber("Distance to hub", distanceToHubXY);
+                    }
 
         public boolean hasTarget() { 
         return targetVisible; 

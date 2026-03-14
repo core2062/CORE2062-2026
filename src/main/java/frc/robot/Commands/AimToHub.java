@@ -135,7 +135,6 @@ public class AimToHub extends Command {
             forward=drivePID.calculate(distanceToHubXY, targetDistance)*Constants.Swerve.maxSpeed;
             if (anglePID.atSetpoint()) {
         rotationOutput = 0;
-        System.out.print(distanceToHubXY);
     }
     if (drivePID.atSetpoint()) {
         forward = 0;
@@ -151,13 +150,12 @@ public class AimToHub extends Command {
     fowardlimit.reset(limitedForward);*/
 }
 //System.out.printf("rotationOutput: %f, limitedTurn: %f, limitedForward %f\n", rotationOutput, limitedTurn, limitedForward);
-
         s_Swerve.setControl(driveRequest.withVelocityY(-limitedForward).withRotationalRate(-limitedTurn));
+        
         /* 
         SmartDashboard.putNumber("Rotation of the april tag",aprilTagRotation);
         SmartDashboard.putNumber("Finds distance to april tag", aprilTagDistance);
         SmartDashboard.putNumber("Angle to turn to the hub", Units.radiansToDegrees(rotationOutput));
-        SmartDashboard.putNumber("Distance to hub", distanceToHubXY);
         SmartDashboard.putNumber("April Tag Inaccurecy",poseAmbiguity);
         SmartDashboard.putNumber("Forward Photon", limitedForward);
         SmartDashboard.putNumber("Turn photon", -limitedTurn);
