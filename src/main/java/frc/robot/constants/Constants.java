@@ -32,13 +32,16 @@ public final class Constants {
   
   public static class IndexerConstants {
     public static final int kIndexMotorPort = 16;
+    public static final int kAgitateIndexerMotorPort = 17;
     
     public static final double kIndexMotorSpeed = 0.75;
+    public static final double kAgitateMotorSpeed = 0.75;
     public static final double kForward = -1.0;
     public static final double kBackward = 1.0;
     public static final double kOff = 1.0;
 
     public static final String indexerSpeedString = "Indexer Speed";
+    public static final String agitaterSpeedString = "Agitater Speed";
   }
 
   public static class IntakeConstants {

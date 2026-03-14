@@ -162,20 +162,24 @@ public class RobotContainer {
             operator.x()
                 .onTrue(new FeedinCommand(i_index, l_launch, 
                     () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
+                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
                 ))
                 .onFalse(new FeedinCommand(i_index, l_launch, 
                     () -> 0.0,  // returns a DoubleSupplier
-                    () -> 0.0   // returns a DoubleSupplier
+                    () -> 0.0,   // returns a DoubleSupplier
+                    () -> 0.0    //returns a DoubleSupplier
                 ));
 
             operator.y()
                .onTrue(new FeedinCommand(i_index, l_launch, 
                     () -> -SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
+                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
                 ))
                .onFalse(new FeedinCommand(i_index, l_launch, 
                     () -> 0.0,  // returns a DoubleSupplier
+                    () -> 0.0,  // retunrns a DoubleSupplier
                     () -> 0.0   // retunrns a DoubleSupplier
                 ));
         
@@ -251,18 +255,21 @@ public class RobotContainer {
         NamedCommands.registerCommand("Launcher Off", new LauncherTurn(l_launch, false));
         NamedCommands.registerCommand("Conveyer On", new ConveyerTurn(l_launch, Constants.LauncherConstants.ConveyerMotorSpeed));
         NamedCommands.registerCommand("Conveyer Off", new ConveyerTurn(l_launch,0.0));
-        NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed));
-        NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0));
+        NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed, Constants.IndexerConstants.kAgitateMotorSpeed));
+        NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0,0.0));
         NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,-Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
         NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, 
                 () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
             ));
         NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index, l_launch, 
                 () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
             ));
         NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 
+                () -> 0.0,  // returns as a DoubleSupplier
                 () -> 0.0,  // returns as a DoubleSupplier
                 () -> 0.0   // returns as a DoubleSupplier
             ));
