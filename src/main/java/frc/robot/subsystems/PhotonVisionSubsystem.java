@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants;
 
 import java.util.List; 
 
@@ -15,6 +16,10 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 import org.photonvision.targeting.PhotonPipelineResult;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class PhotonVisionSubsystem extends SubsystemBase{
  private double distanceToHub=0;
@@ -32,6 +37,15 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private double hubY=0;
     private double hubZ=0;
     private boolean targetVisible=false;
+        
+    private final PIDController anglePID=new PIDController(0.9, 0, 0);
+    private final PIDController drivePID=new PIDController(0.4,0,0);
+    private final SlewRateLimiter fowardlimit=new SlewRateLimiter(6.0);
+    private final SlewRateLimiter rotationlimit=new SlewRateLimiter(12.0);
+
+    private double forwardOutput=0.0;
+    private double rotationOutput=0.0;
+    private final double targetDistance=3.9624; // in meters
 
     
     private final Transform3d tagToHub=new Transform3d(
@@ -88,6 +102,24 @@ private boolean isValidId(int id) {
                         //turnAngle=Math.asin(distanceAprilTagToHub*Math.sin(aprilTagRotation)/distanceToHub);//Law sin
                         distanceToHubXY=Math.sqrt(Math.pow(hubX, 2)+Math.pow(hubY, 2));
                         turnAngle=Math.atan2(hubY, hubX)-(Math.PI/2);
+                        
+                        forwardOutput=drivePID.calculate(distanceToHubXY, targetDistance);
+                        rotationOutput=anglePID.calculate(turnAngle,0);
+
+                        rotationOutput = MathUtil.clamp(rotationOutput,-1,1)*Constants.Swerve.maxAngularVelocity;
+                        forwardOutput=MathUtil.clamp(forwardOutput,-1,1)*Constants.Swerve.maxSpeed;
+
+                        limitedTurn=rotationlimit.calculate(rotationOutput);
+                        limitedForward=fowardlimit.calculate(forwardOutput);
+
+                        if (anglePID.atSetpoint()) {
+                            rotationOutput = 0;
+                            System.out.print(distanceToHubXY);
+                        }
+                        if (drivePID.atSetpoint()) {
+                            limitedForward = 0;
+                        }
+
                         break;
                     }else{
                         turnAngle=0;
@@ -104,6 +136,12 @@ private boolean isValidId(int id) {
     public double getDistanceToHub() {
          return distanceToHubXY; 
         }
+    public double getSpeedToHub(){
+        return limitedForward;
+    }
+    public double getRotationToHub(){
+        return limitedTurn;
+    }
     public double getAngleToHub() { 
         return turnAngle; 
     }
