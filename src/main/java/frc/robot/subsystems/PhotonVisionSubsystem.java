@@ -2,31 +2,17 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
-
-import java.util.List; 
-
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonTrackedTarget;
-import org.photonvision.targeting.TargetCorner;
-import org.photonvision.targeting.PhotonPipelineResult;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class PhotonVisionSubsystem extends SubsystemBase{
- private double distanceToHub=0;
-    private double distanceError=0;
-    private final double distanceAprilTagToHub=0.6096; //0.923798 meters for comp 
-    private final double aprilTagHeight=0.7874;
-    private double aprilTagDistance=0;
     private double aprilTagRotation=0;
     private double turnAngle=0;
     private double poseAmbiguity=0;
@@ -77,29 +63,22 @@ private boolean isValidId(int id) {
                 // At least one AprilTag was seen by the camera
                 for (var target : result.getTargets()) {
                     int id=target.getFiducialId();
-                    
                     poseAmbiguity = target.getPoseAmbiguity();
                     if (isValidId(id)&&poseAmbiguity<0.5) {
-                        //System.out.println("The tracked april tag is tag ID"+ target.getFiducialId());
                         targetVisible = true;
                         var transform = target.getBestCameraToTarget();
                         Transform3d cameraToTarget = target.getBestCameraToTarget();
-                        Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
                         Pose3d robotPose = new Pose3d();
                         Pose3d hubPose = robotPose.transformBy(robotToCamera)
                           .transformBy(cameraToTarget)
                           .transformBy(tagToHub);
-                         hubX=hubPose.getX();
-                         hubY=hubPose.getY();
-                         hubZ=hubPose.getZ();
-                         aprilTagRotation=transform.getRotation().getZ();
-                           if(aprilTagRotation<0){
+                        hubX=hubPose.getX();
+                        hubY=hubPose.getY();
+                        hubZ=hubPose.getZ();
+                        aprilTagRotation=transform.getRotation().getZ();
+                            if(aprilTagRotation<0){
                                 aprilTagRotation+=Math.PI*2;
                             }
-                        //aprilTagDistance=Math.sqrt(Math.pow(tagX,2)+Math.pow(tagY, 2)+Math.pow(tagZ, 2));//Distance formula
-
-                        //distanceToHub=Math.sqrt(Math.pow(distanceAprilTagToHub,2)+Math.pow(aprilTagDistance, 2)-2*distanceAprilTagToHub*aprilTagDistance*Math.cos(aprilTagRotation));//Law of cosines
-                        //turnAngle=Math.asin(distanceAprilTagToHub*Math.sin(aprilTagRotation)/distanceToHub);//Law sin
                         distanceToHubXY=Math.sqrt(Math.pow(hubX, 2)+Math.pow(hubY, 2));
                         turnAngle=Math.atan2(hubY, hubX)-(Math.PI/2);
                         
@@ -128,9 +107,9 @@ private boolean isValidId(int id) {
             }
         }
             SmartDashboard.putNumber("Distance to hub", distanceToHubXY);
-                    }
+    }
 
-        public boolean hasTarget() { 
+    public boolean hasTarget() { 
         return targetVisible; 
     }
     public double getDistanceToHub() {
@@ -145,28 +124,5 @@ private boolean isValidId(int id) {
     public double getAngleToHub() { 
         return turnAngle; 
     }
-/* 
-    public void processVision(){
 
-    PhotonPipelineResult result = camera.getLatestResult();
-
-    //Checks for a target
-        if(result.hasTargets()){
-        //Finds the best data
-        PhotonTrackedTarget target=result.getBestTarget();
-        //List of targets
-        List<PhotonTrackedTarget> targets = result.getTargets();
-        //Gets data from the camera.
-        double yaw = target.getYaw();
-        double pitch = target.getPitch();
-        double area = target.getArea();
-        double skew = target.getSkew();
-        Transform3d bestCameraToTarget = target.getBestCameraToTarget();
-        List<TargetCorner> corners = target.getDetectedCorners();
-        Transform3d altPose = target.getAlternateCameraToTarget();
-        int targetID = target.getFiducialId();
-        double poseAmbiguity = target.getPoseAmbiguity();
-        }
-    }
-*/
 }
