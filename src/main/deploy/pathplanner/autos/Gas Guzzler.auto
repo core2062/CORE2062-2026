@@ -31,7 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot run turn"
+            "pathName": "depot run turn something"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Align"
           }
         },
         {

@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.constants.Constants;
 import frc.robot.commands.AimToHub;
+import frc.robot.commands.AimToHubAuto;
 import frc.robot.commands.ConveyerTurn;
 import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
@@ -74,13 +75,14 @@ public class RobotContainer {
     private final PhotonVisionSubsystem pv_PhotonVisionSubsystem = new PhotonVisionSubsystem();
     
 
-    public final CommandSwerveDrivetrain drivetrain;
+    public CommandSwerveDrivetrain drivetrain;
     private final SendableChooser<Command> autoChooser;
     
     public RobotContainer() {
         
-        defineAutoCommands();
         drivetrain = TunerConstants.createDrivetrain();
+        defineAutoCommands();
+        drivetrain.configureAutoBuilder();
         autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");
         
         configureBindings();
@@ -246,6 +248,7 @@ public class RobotContainer {
          return autoChooser.getSelected();
     }
     
+    
     private void defineAutoCommands() {
         NamedCommands.registerCommand("Launcher On", new LauncherTurn(l_launch, true));
         NamedCommands.registerCommand("Launcher Off", new LauncherTurn(l_launch, false));
@@ -256,11 +259,11 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,-Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
         NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, 
                 () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
             ));
         NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index, l_launch, 
                 () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
             ));
         NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 
                 () -> 0.0,  // returns as a DoubleSupplier
@@ -271,5 +274,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Auto Align", new AimToHubAuto(drivetrain, pv_PhotonVisionSubsystem,0.0, 0.0));
     }
 }

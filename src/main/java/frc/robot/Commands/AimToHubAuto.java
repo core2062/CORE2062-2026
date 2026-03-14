@@ -10,11 +10,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PhotonVisionSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class AimToHubAuto extends Command {
     private CommandSwerveDrivetrain s_Swerve;
     private PhotonVisionSubsystem p_vision;
    private double forward;
    private double rotationOutput;
+   private boolean finished = false;
     private final SwerveRequest.RobotCentric driveRequest = new SwerveRequest.RobotCentric();
     private final PIDController anglePID=new PIDController(0.9, 0, 0);
     private final PIDController drivePID=new PIDController(0.4,0,0);
@@ -58,7 +61,8 @@ public class AimToHubAuto extends Command {
         drivePID.setTolerance(0.02);
         
         // This tells the robot that this command uses the drivetrain
-        addRequirements(s_Swerve,p_vision);
+        addRequirements(p_vision);
+        addRequirements(s_Swerve);
     }
     @Override
     public void execute(){
@@ -120,7 +124,7 @@ public class AimToHubAuto extends Command {
             distanceToHubXY=p_vision.getDistanceToHub();
             rotationOutput=anglePID.calculate(turnAngle,0)*Constants.Swerve.maxAngularVelocity;
             forward=drivePID.calculate(distanceToHubXY, targetDistance)*Constants.Swerve.maxSpeed;
-            if (anglePID.atSetpoint()) {
+    if (anglePID.atSetpoint()) {
         rotationOutput = 0;
         System.out.print(distanceToHubXY);
     }
@@ -138,9 +142,12 @@ public class AimToHubAuto extends Command {
     fowardlimit.reset(limitedForward);*/
 }
 //System.out.printf("rotationOutput: %f, limitedTurn: %f, limitedForward %f\n", rotationOutput, limitedTurn, limitedForward);
-
+        if (anglePID.atSetpoint() && drivePID.atSetpoint()){
+            finished = true;
+        }
         s_Swerve.setControl(driveRequest.withVelocityY(-limitedForward).withRotationalRate(-limitedTurn));
-        /* 
+        System.out.printf("AimToHubAuto: finished: %b, limitedForward: %f, limitedTurn: %f\n", finished, limitedForward, -limitedTurn);
+        /* \n
         SmartDashboard.putNumber("Rotation of the april tag",aprilTagRotation);
         SmartDashboard.putNumber("Finds distance to april tag", aprilTagDistance);
         SmartDashboard.putNumber("Angle to turn to the hub", Units.radiansToDegrees(rotationOutput));
@@ -149,5 +156,10 @@ public class AimToHubAuto extends Command {
         SmartDashboard.putNumber("Forward Photon", limitedForward);
         SmartDashboard.putNumber("Turn photon", -limitedTurn);
         SmartDashboard.putNumber("Finding the rotation of april tag", turnAngle);*/
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished ;
     }
 }
