@@ -9,12 +9,6 @@ package frc.robot.constants;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public enum Mode {
-    FORWARD,
-    BACKWARD,
-    OFF
-  }
-
   public static class JoystickConstants {
     public static final int kDriverControllerPort = 0;
   }

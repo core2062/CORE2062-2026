@@ -160,12 +160,24 @@ public class RobotContainer {
 
         /* index */
             operator.x()
-                .onTrue(new FeedinCommand(i_index, l_launch, Constants.Mode.FORWARD))
-                .onFalse(new FeedinCommand(i_index, l_launch, Constants.Mode.OFF));
+                .onTrue(new FeedinCommand(i_index, l_launch, 
+                    () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
+                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                ))
+                .onFalse(new FeedinCommand(i_index, l_launch, 
+                    () -> 0.0,  // returns a DoubleSupplier
+                    () -> 0.0   // returns a DoubleSupplier
+                ));
 
             operator.y()
-               .onTrue(new FeedinCommand(i_index, l_launch, Constants.Mode.BACKWARD))
-               .onFalse(new FeedinCommand(i_index, l_launch, Constants.Mode.OFF));
+               .onTrue(new FeedinCommand(i_index, l_launch, 
+                    () -> -SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
+                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                ))
+               .onFalse(new FeedinCommand(i_index, l_launch, 
+                    () -> 0.0,  // returns a DoubleSupplier
+                    () -> 0.0   // retunrns a DoubleSupplier
+                ));
         
         /* intake  */ 
             operator.leftBumper()
@@ -242,9 +254,18 @@ public class RobotContainer {
         NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed));
         NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0));
         NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,-Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
-        NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, Constants.Mode.FORWARD));
-        NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index, l_launch, Constants.Mode.FORWARD));
-        NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, Constants.Mode.OFF));
+        NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, 
+                () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+            ));
+        NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index, l_launch, 
+                () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+            ));
+        NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 
+                () -> 0.0,  // returns as a DoubleSupplier
+                () -> 0.0   // returns as a DoubleSupplier
+            ));
         NamedCommands.registerCommand("Intake off", new IntakeCommand(i_intake, 0.0, 0.0));
         NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
