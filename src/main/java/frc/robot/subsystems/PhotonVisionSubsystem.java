@@ -93,7 +93,6 @@ private boolean isValidId(int id) {
 
                         if (anglePID.atSetpoint()) {
                             rotationOutput = 0;
-                            System.out.print(distanceToHubXY);
                         }
                         if (drivePID.atSetpoint()) {
                             limitedForward = 0;
