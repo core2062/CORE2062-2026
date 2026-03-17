@@ -18,13 +18,14 @@ public class FeedinCommand extends Command{
     private final LauncherSubsystem l_launch;
     private final DoubleSupplier conveyerSpeed;
     private final DoubleSupplier indexerSpeed;
+    private final DoubleSupplier agitateSpeed;
 
-
-    public FeedinCommand(IndexerSubsystem indexSub, LauncherSubsystem launcherSub, DoubleSupplier conveyer, DoubleSupplier indexer ) {
+    public FeedinCommand(IndexerSubsystem indexSub, LauncherSubsystem launcherSub, DoubleSupplier conveyer, DoubleSupplier indexer, DoubleSupplier agitater) {
         i_index = indexSub;
         l_launch = launcherSub;
         conveyerSpeed = conveyer;
         indexerSpeed = indexer;
+        agitateSpeed = agitater;
 
         addRequirements(i_index, l_launch);
     }
@@ -33,7 +34,7 @@ public class FeedinCommand extends Command{
     public void execute() {
 
         System.out.printf("FeedIn: indexSpeed: %f, conveyerSpeed: %f\n", indexerSpeed.getAsDouble(), conveyerSpeed.getAsDouble());
-        i_index.setIndexerSpeed(indexerSpeed.getAsDouble());
+        i_index.setIndexerSpeed(indexerSpeed.getAsDouble(), agitateSpeed.getAsDouble());
         l_launch.setConveyerSpeed(conveyerSpeed.getAsDouble());
     }
     @Override
