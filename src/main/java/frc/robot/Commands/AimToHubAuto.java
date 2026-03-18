@@ -1,32 +1,25 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PhotonVisionSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AimToHubAuto extends Command {
+
     private CommandSwerveDrivetrain s_Swerve;
     private PhotonVisionSubsystem p_vision;
    private double forward;
    private double rotationOutput;
    private boolean finished = false;
     private final SwerveRequest.RobotCentric driveRequest = new SwerveRequest.RobotCentric();
-    private final PIDController anglePID=new PIDController(0.9, 0, 0);
-    private final PIDController drivePID=new PIDController(0.4,0,0);
+
     private double limitedForward=0;
     private double limitedTurn=0;
-      public AimToHubAuto(CommandSwerveDrivetrain s_Swerve, PhotonVisionSubsystem p_vision, GenericHID controller) {
+
+    public AimToHubAuto(CommandSwerveDrivetrain s_Swerve, PhotonVisionSubsystem p_vision) {
         this.s_Swerve = s_Swerve;
         this.p_vision = p_vision;
-        this.controller = controller;
-        anglePID.enableContinuousInput(-Math.PI, Math.PI);
-        anglePID.setTolerance(Units.degreesToRadians(3));
-        drivePID.setTolerance(0.04);
         
         // This tells the robot that this command uses the drivetrain
         addRequirements(p_vision);
@@ -34,9 +27,6 @@ public class AimToHubAuto extends Command {
     }
     @Override
     public void execute(){
-       
-        double forward = -controller.getRawAxis(1) * Constants.Swerve.maxSpeed;
-        double rotationOutput = -controller.getRawAxis(4) * Constants.Swerve.maxAngularVelocity;   
            if (p_vision.hasTarget()==true) {
             double turnAngle=0;
             turnAngle=p_vision.getAngleToHub();
