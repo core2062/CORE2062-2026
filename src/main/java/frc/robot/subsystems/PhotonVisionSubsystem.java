@@ -135,6 +135,12 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     public double getRotationToHub(){
         return limitedTurn;
     }
+    public double getRawSpeedToHub(){
+        return forwardOutput;
+    }
+    public double getRawRotationToHub(){
+        return rotationOutput;
+    }
     public double getAngleToHub() { 
         return turnAngle; 
     }

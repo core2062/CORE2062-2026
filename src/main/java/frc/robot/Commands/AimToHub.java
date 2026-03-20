@@ -16,6 +16,8 @@ public class AimToHub extends Command {
 
     private double limitedForward=0;
     private double limitedTurn=0;
+    private double forward=0;
+    private double rotationOutput=0;
 
     public AimToHub(CommandSwerveDrivetrain s_Swerve, PhotonVisionSubsystem p_vision) {
         this.s_Swerve = s_Swerve;
@@ -29,11 +31,13 @@ public class AimToHub extends Command {
            if (p_vision.hasTarget()==true) {
                 limitedForward=p_vision.getSpeedToHub();
                 limitedTurn=p_vision.getRotationToHub();
+                forward=p_vision.getRawSpeedToHub();
+                rotationOutput=p_vision.getRawRotationToHub();
            }else{
-            limitedForward=0;
-            limitedTurn=0;
+            //limitedForward=0;
+            //limitedTurn=0;
            }
-        //System.out.printf("rotationOutput: %f, limitedTurn: %f, limitedForward %f\n", rotationOutput, limitedTurn, limitedForward);
+        //System.out.printf("raw turn: %f, raw forward: %f, limitedTurn: %f, limitedForward %f\n", rotationOutput, forward, limitedTurn, limitedForward);
         s_Swerve.setControl(driveRequest.withVelocityY(-limitedForward).withRotationalRate(-limitedTurn));
     }
     @Override
