@@ -161,7 +161,7 @@ public class RobotContainer {
             operator.x()
                 .onTrue(new FeedinCommand(i_index, l_launch, 
                     () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
                 ))
                 .onFalse(new FeedinCommand(i_index, l_launch, 
                     () -> 0.0,  // returns a DoubleSupplier
