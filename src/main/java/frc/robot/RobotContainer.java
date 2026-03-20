@@ -14,16 +14,13 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.constants.Constants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -38,14 +35,10 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeJoystickCommand;
 import frc.robot.commands.IntakeRotate;
 import frc.robot.commands.LauncherTurn;
-import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.PhotonVisionSubsystem;
-import frc.robot.subsystems.IndexerSubsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class RobotContainer {
@@ -162,24 +155,24 @@ public class RobotContainer {
 
         /* index */
             operator.x()
-                .onTrue(new FeedinCommand(i_index, l_launch, 
-                    () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
-                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
+                .onTrue(new FeedinCommand(i_index, 
+                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
+                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
+                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
                 ))
-                .onFalse(new FeedinCommand(i_index, l_launch, 
+                .onFalse(new FeedinCommand(i_index, 
                     () -> 0.0,  // returns a DoubleSupplier
                     () -> 0.0,   // returns a DoubleSupplier
                     () -> 0.0    //returns a DoubleSupplier
                 ));
 
             operator.y()
-               .onTrue(new FeedinCommand(i_index, l_launch, 
-                    () -> -SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
-                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
+               .onTrue(new FeedinCommand(i_index, 
+                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
+                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
+                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
                 ))
-               .onFalse(new FeedinCommand(i_index, l_launch, 
+               .onFalse(new FeedinCommand(i_index, 
                     () -> 0.0,  // returns a DoubleSupplier
                     () -> 0.0,  // retunrns a DoubleSupplier
                     () -> 0.0   // retunrns a DoubleSupplier
@@ -187,23 +180,17 @@ public class RobotContainer {
         
         /* intake  */ 
             operator.leftBumper()
-             .onTrue(new IntakeCommand(i_intake, -Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
+             .onTrue(new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed) 
                 )
              .onFalse(new IntakeCommand(i_intake, 0.0, 0.0)
              );
            
              operator.rightBumper()
-             .onTrue(new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed, -Constants.IntakeConstants.kLowerIntakeMotorSpeed)
+             .onTrue(new IntakeCommand(i_intake, -Constants.IntakeConstants.kUpperIntakeMotorSpeed, -Constants.IntakeConstants.kLowerIntakeMotorSpeed)
                 )
              .onFalse(new IntakeCommand(i_intake, 0.0, 0.0)
              );
 
-
-            // i_intake.setDefaultCommand(
-            //         Commands.run(
-            //             () -> i_intake.setPivotSpeed(-operator.getRawAxis(XboxController.Axis.kLeftY.value)*Constants.IntakeConstants.kPivotMotorSpeed),
-            //             i_intake
-            //         ));
             i_intake.setDefaultCommand(
                 new IntakeJoystickCommand(
                     i_intake, 
@@ -239,10 +226,10 @@ public class RobotContainer {
             MaxAngularRate = 1.0*RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
         }
     }
-    private void changeLauncherSpeed(int adjustLaucherSpeed){
-        if(adjustLaucherSpeed==1){
+    private void changeLauncherSpeed(int adjustLauncherSpeed){
+        if(adjustLauncherSpeed==1){
             l_launch.adjustShootSpeed(100);
-        }else if(adjustLaucherSpeed==2){
+        }else if(adjustLauncherSpeed==2){
             l_launch.adjustShootSpeed(-100);
         }
 
@@ -254,22 +241,28 @@ public class RobotContainer {
     
     
     private void defineAutoCommands() {
+
+         //TODO:CHECK FEED IN COMMANDS, INDEX ON/OFF (changed indexermotor configs), INTAKE, 
+
+
         NamedCommands.registerCommand("Launcher On", new LauncherTurn(l_launch, true));
         NamedCommands.registerCommand("Launcher Off", new LauncherTurn(l_launch, false));
-        NamedCommands.registerCommand("Conveyer On", new ConveyerTurn(l_launch, Constants.LauncherConstants.ConveyerMotorSpeed));
-        NamedCommands.registerCommand("Conveyer Off", new ConveyerTurn(l_launch,0.0));
+        NamedCommands.registerCommand("Conveyer On", new ConveyerTurn(i_index, Constants.IndexerConstants.ConveyerMotorSpeed));
+        NamedCommands.registerCommand("Conveyer Off", new ConveyerTurn(i_index,0.0));
         NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed, Constants.IndexerConstants.kAgitateMotorSpeed));
         NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0,0.0));
-        NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,-Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
-        NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index, l_launch, 
-                () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+        NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,Constants.IntakeConstants.kUpperIntakeMotorSpeed, Constants.IntakeConstants.kLowerIntakeMotorSpeed));
+        NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index,  
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
             ));
-        NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index, l_launch, 
-                () -> SmartDashboard.getNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed),
-                () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed)
+        NamedCommands.registerCommand("Feed in 2", new FeedinCommand(i_index,
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
+                () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
             ));
-        NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, l_launch, 
+        NamedCommands.registerCommand("Feed off", new FeedinCommand(i_index, 
                 () -> 0.0,  // returns as a DoubleSupplier
                 () -> 0.0,  // returns as a DoubleSupplier
                 () -> 0.0   // returns as a DoubleSupplier

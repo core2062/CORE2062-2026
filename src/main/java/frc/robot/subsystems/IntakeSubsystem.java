@@ -19,7 +19,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
-import com.ctre.phoenix6.signals.S1FloatStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,11 +28,10 @@ import frc.robot.constants.Constants;
 public class IntakeSubsystem extends SubsystemBase {
     private TalonFX m_UpperIntakeMotor = new TalonFX(Constants.IntakeConstants.kUpperIntakeMotorPort);
     private TalonFX m_LowerIntakeMotor = new TalonFX(Constants.IntakeConstants.kLowerIntakeMotorPort);
-
     private TalonFX m_RotatingMotor = new TalonFX(Constants.IntakeConstants.kRotatingInakeMotorPort);
 
     private final CANBus kCANBus = CANBus.roboRIO();
-     private final CANdi candi = new CANdi(0, kCANBus);
+    private final CANdi candi = new CANdi(0, kCANBus);
        
 
 public IntakeSubsystem(){
@@ -52,15 +50,13 @@ public IntakeSubsystem(){
     final TalonFXConfiguration UpperIntakeMotor_configs = commonConfigs.clone()
         .withMotorOutput(
         commonConfigs.MotorOutput.clone()
-        .withInverted(InvertedValue.CounterClockwise_Positive)
-        //TODO, check value
+        .withInverted(InvertedValue.Clockwise_Positive)
         );
 
     final TalonFXConfiguration LowerIntakeMotor_configs = commonConfigs.clone()
         .withMotorOutput(
         commonConfigs.MotorOutput.clone()
         .withInverted(InvertedValue.Clockwise_Positive)
-        //TODO: check value 
         );
 
     final TalonFXConfiguration RotatingMotor_configs = commonConfigs.clone();     
@@ -87,7 +83,7 @@ final var limitConfigs = new HardwareLimitSwitchConfigs();
     m_LowerIntakeMotor.getConfigurator().apply(LowerIntakeMotor_configs);
     m_RotatingMotor.getConfigurator().apply(RotatingMotor_configs);
     m_RotatingMotor.getConfigurator().apply(configs);
-    // m_RotatingMotor.getConfigurator().apply(limitConfigs);
+    m_RotatingMotor.getConfigurator().apply(limitConfigs);
     }
 
 

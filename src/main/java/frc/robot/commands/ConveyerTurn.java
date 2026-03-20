@@ -1,23 +1,23 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.IndexerSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 
 public class ConveyerTurn extends Command {
-    private final LauncherSubsystem l_Launch;
+    private final IndexerSubsystem i_index;
     private final double m_speed;
 
 
-    public ConveyerTurn(LauncherSubsystem subsystem, double speed) {
-        l_Launch = subsystem;
+    public ConveyerTurn(IndexerSubsystem subsystem, double speed) {
+        i_index = subsystem;
         m_speed = speed;
-        addRequirements(l_Launch);
+        addRequirements(i_index);
     }
 
     @Override
     public void execute() {
-        l_Launch.setConveyerSpeed(m_speed);
+        i_index.setConveyerSpeed(m_speed);
     }
     @Override
     public boolean isFinished() {

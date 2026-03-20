@@ -16,24 +16,23 @@ public final class Constants {
   public static class LauncherConstants {
     public static final int UpperMotorPort = 14; 
     public static final int LowerMotorPort = 13; 
-    public static final int ConveyerMotorPort = 15; 
 
     public static final double UpperMotorSpeedRpm = 2050;
     public static final double LowerMotorSpeedRpm  = 1050;
-    public static final double ConveyerMotorSpeed = 0.75;
     public static final double kForward = 1.0;
     public static final double kBackward = -1.0;
     public static final double kOff = 0.0;
     
     public static final String upperMotorString = "desired UpperMotorSpeed";
     public static final String lowerMotorString = "desired LowerMotorSpeed";
-    public static final String converyMotorString = "desired ConveyerSpeed";
   }
   
   public static class IndexerConstants {
     public static final int kIndexMotorPort = 16;
     public static final int kAgitateIndexerMotorPort = 17;
+    public static final int ConveyerMotorPort = 15; 
     
+    public static final double ConveyerMotorSpeed = 0.75;
     public static final double kIndexMotorSpeed = 0.75;
     public static final double kAgitateMotorSpeed = 0.75;
     public static final double kForward = -1.0;
@@ -42,6 +41,7 @@ public final class Constants {
 
     public static final String indexerSpeedString = "Indexer Speed";
     public static final String agitaterSpeedString = "Agitater Speed";
+    public static final String converyMotorString = "desired ConveyerSpeed";
   }
 
   public static class IntakeConstants {
