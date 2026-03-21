@@ -38,6 +38,7 @@ public final class Constants {
     public static final double kForward = -1.0;
     public static final double kBackward = 1.0;
     public static final double kOff = 1.0;
+    public static final double IndexerDeadband = 0.02;
 
     public static final String indexerSpeedString = "Indexer Speed";
     public static final String agitaterSpeedString = "Agitater Speed";
@@ -52,9 +53,10 @@ public final class Constants {
 
     public static final double kUpperIntakeMotorSpeed = 0.5;
     public static final double kLowerIntakeMotorSpeed = 0.5;
-    public static final int kPivotMotorDegree = 115;
+    public static final int kPivotMotorDegree = 100;
     public static final double kPivotMotorSpeed = 0.3;
     public static final double gearRatio = 81.0;
+    public static final double AgitatorSafeAngle = -10;
   }
 public static final class Swerve{
     public static final double maxSpeed = 2.195; //TODO: This must be tuned to specific robot

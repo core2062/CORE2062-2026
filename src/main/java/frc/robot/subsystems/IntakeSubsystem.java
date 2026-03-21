@@ -62,19 +62,19 @@ public IntakeSubsystem(){
     final TalonFXConfiguration RotatingMotor_configs = commonConfigs.clone();     
     RotatingMotor_configs.HardwareLimitSwitch.withReverseLimitRemoteCANdiS1(candi);
 
-// Configure PID gains (kP, kI, kD) for position control
-//TODO: these configs came from LauncherSubsystem, get from SysId?
+    // Configure PID gains (kP, kI, kD) for position control
+    //TODO: these configs came from LauncherSubsystem, get from SysId?
     final TalonFXConfiguration configs = new TalonFXConfiguration();
         configs.Slot0.kP = 0.11; // Proportional Gain
         configs.Slot0.kI = 0.0;  // Integral Gain
         configs.Slot0.kD = 0.0;  // Derivative Gain
        
-final var toApply = new CANdiConfiguration();
+    final var toApply = new CANdiConfiguration();
     toApply.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow; 
 
     candi.getConfigurator().apply(toApply);
     
-final var limitConfigs = new HardwareLimitSwitchConfigs();
+    final var limitConfigs = new HardwareLimitSwitchConfigs();
     limitConfigs.ForwardLimitSource = ForwardLimitSourceValue.RemoteCANdiS1;
     limitConfigs.ForwardLimitRemoteSensorID = candi.getDeviceID();
 
@@ -87,30 +87,48 @@ final var limitConfigs = new HardwareLimitSwitchConfigs();
     }
 
 
-public void setIntakeSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
-  m_UpperIntakeMotor.setControl(new DutyCycleOut(upperMotorSpeed));
-  m_LowerIntakeMotor.setControl(new DutyCycleOut(lowerMotorSpeed));
+    public void setIntakeSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
+        m_UpperIntakeMotor.setControl(new DutyCycleOut(upperMotorSpeed));
+        m_LowerIntakeMotor.setControl(new DutyCycleOut(lowerMotorSpeed));
   }
 
 
-/**
- * Turns the motor a relative number of degrees
-  * @param degreesToTurn positive for forward, negative for backward
- */
-public void turnDegrees(double degreesToTurn) {
-    // Calculate rotations needed
-    double rotations = (degreesToTurn / 360.0)* Constants.IntakeConstants.gearRatio;
-    
-    // Get current position
-    double currentPos = m_RotatingMotor.getPosition().getValueAsDouble();
-    // Create the request: current + desired
-    PositionVoltage request = new PositionVoltage(currentPos + rotations);
-      // Send command to motor
-    m_RotatingMotor.setControl(request);
-}
+    /**
+     * Turns the motor a relative number of degrees
+     * @param degreesToTurn positive for forward, negative for backward
+     */
+    public void turnDegrees(double degreesToTurn) {
+        // Calculate rotations needed
+        double rotations = (degreesToTurn / 360.0)* Constants.IntakeConstants.gearRatio;
+        
+        // Get current position
+        double currentPos = m_RotatingMotor.getPosition().getValueAsDouble();
+        // Create the request: current + desired
+        PositionVoltage request = new PositionVoltage(currentPos + rotations);
+        // Send command to motor
+        m_RotatingMotor.setControl(request);
+    }
 
-public void setPivotSpeed(double speed) {
-    m_RotatingMotor.setControl(new DutyCycleOut(speed));
-}
+    public void setPivotSpeed(double speed) {
+        m_RotatingMotor.setControl(new DutyCycleOut(speed));
+    }
 
+    public double getIntakeAngle() {
+        return m_RotatingMotor.getPosition().getValueAsDouble();
+    }
+
+    public boolean intakeAgitatorSafe() {
+        double angle = getIntakeAngle();
+        if (angle < Constants.IntakeConstants.AgitatorSafeAngle) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void periodic() {
+        if (candi.getS1Closed().getValue()) {
+            m_RotatingMotor.setPosition(0.0);
+        }
+    }
 }

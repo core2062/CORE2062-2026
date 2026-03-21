@@ -22,13 +22,17 @@ public class IndexerSubsystem extends SubsystemBase{
     private TalonFX m_ConveyerMotor = new TalonFX(Constants.IndexerConstants.ConveyerMotorPort);
     private double indexerSpeed;
     private double agitaterSpeed;
+    private IntakeSubsystem m_intake;
+    private double currentIndexSpeed = 0.0;
+    private double currentAgitaterSpeed = 0.0;
     
-    public IndexerSubsystem() {
+    public IndexerSubsystem(IntakeSubsystem intake) {
+        m_intake = intake;
         SmartDashboard.putNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed);
         SmartDashboard.putNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed);
         SmartDashboard.putNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed);
-        indexerSpeed = Constants.IndexerConstants.kIndexMotorSpeed;
-        agitaterSpeed = Constants.IndexerConstants.kAgitateMotorSpeed;
+        indexerSpeed = 0.0;
+        agitaterSpeed = 0.0;
 
         final TalonFXConfiguration commonConfigs = new TalonFXConfiguration()
             .withMotorOutput(
@@ -64,7 +68,13 @@ public class IndexerSubsystem extends SubsystemBase{
 
 public void setIndexerSpeed(double indexspeed, double agitateSpeed){
         m_IndexMotor.setControl(new DutyCycleOut(indexspeed));
-        m_AgitateMotor.setControl(new DutyCycleOut(agitateSpeed));
+        currentIndexSpeed = indexspeed;
+        currentAgitaterSpeed = agitateSpeed;
+        if (m_intake.intakeAgitatorSafe()) {
+            m_AgitateMotor.setControl(new DutyCycleOut(agitateSpeed));
+        } else {
+            m_AgitateMotor.setControl(new DutyCycleOut(0.0));
+        }
 }
 
 public void setConveyerSpeed(Double speed){
@@ -83,6 +93,11 @@ public void periodic() {
             agitaterSpeed = dashAgitate;
         }
         // System.out.printf("IndexerSubsystem: indexerSpeed is %f\n", indexerSpeed);
+        if (!m_intake.intakeAgitatorSafe()) {
+            m_AgitateMotor.setControl(new DutyCycleOut(0.0));
+        } else if (Math.abs(currentIndexSpeed) > Constants.IndexerConstants.IndexerDeadband) {
+            m_AgitateMotor.setControl(new DutyCycleOut(currentAgitaterSpeed));
+        }
     }
 
 }

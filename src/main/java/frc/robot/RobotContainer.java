@@ -57,8 +57,8 @@ public class RobotContainer {
     
     /* Subsystems */
     private final LauncherSubsystem l_launch = new LauncherSubsystem();
-    private final IndexerSubsystem i_index = new IndexerSubsystem();
     private final IntakeSubsystem i_intake = new IntakeSubsystem();
+    private final IndexerSubsystem i_index = new IndexerSubsystem(i_intake);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
