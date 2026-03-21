@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AimToHub;
-import frc.robot.commands.AimToHubAuto;
 import frc.robot.commands.ConveyerTurn;
 import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;

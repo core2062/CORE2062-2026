@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.constants.Constants;
 import frc.robot.commands.AimToHub;
-import frc.robot.commands.AimToHubAuto;
 import frc.robot.commands.ConveyerTurn;
 import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
@@ -271,6 +270,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
-        NamedCommands.registerCommand("Auto Align", new AimToHubAuto(drivetrain, pv_PhotonVisionSubsystem,0.0, 0.0));
+        NamedCommands.registerCommand("Auto Align", new AimToHub(drivetrain, pv_PhotonVisionSubsystem));
     }
 }

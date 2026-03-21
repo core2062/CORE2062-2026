@@ -35,7 +35,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private double forwardOutput=0.0;
     private double rotationOutput=0.0;
     private boolean finished=false;
-    private final double targetDistance=4.572; // in meters
+    private final double targetDistance=3.9624; // in meters
 
     //Translations
     private final Transform3d tagToHub=new Transform3d(
