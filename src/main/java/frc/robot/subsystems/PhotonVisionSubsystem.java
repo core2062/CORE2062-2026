@@ -34,16 +34,17 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private boolean targetVisible=false;
     private double forwardOutput=0.0;
     private double rotationOutput=0.0;
-    private final double targetDistance=3.9624; // in meters
+    private boolean finished=false;
+    private final double targetDistance=4.572; // in meters
 
     //Translations
     private final Transform3d tagToHub=new Transform3d(
         new Translation3d(-0.6096, 0.0, 0.3048),
         new Rotation3d()
     );
-    private final Transform3d robotToCamera = new Transform3d(
-        new Translation3d(0.0, 0, 0.0),
-        new Rotation3d(0, 0, Math.PI/2)  // Rotated 90 degrees (left)
+    private final Transform3d shooterToCamera = new Transform3d(
+        new Translation3d(0.0, 0.6096, 0.0),
+        new Rotation3d(0, 0, Units.degreesToRadians(0))
     );
     public PhotonCamera getCamera(){
         return camera;
@@ -55,13 +56,18 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     
     public PhotonVisionSubsystem(){
         anglePID.enableContinuousInput(-Math.PI, Math.PI);
-        anglePID.setTolerance(Units.degreesToRadians(3));
+        anglePID.setTolerance(Units.degreesToRadians(1.5));
         drivePID.setTolerance(0.04);
     }
+    private double round(double value, int places) {
+    double scale = Math.pow(10, places);
+    return Math.round(value * scale) / scale;
+}
 
     @Override 
     public void periodic(){
         targetVisible=false;
+        finished=false;
         var results = camera.getAllUnreadResults();
         if (!results.isEmpty()) {
             var result = results.get(results.size() - 1);
@@ -76,7 +82,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                         Transform3d cameraToTarget = target.getBestCameraToTarget();
                         Pose3d robotPose = new Pose3d();
                         Pose3d hubPose = robotPose
-                          .transformBy(robotToCamera)
+                          .transformBy(shooterToCamera)
                           .transformBy(cameraToTarget)
                           .transformBy(tagToHub);
 
@@ -88,7 +94,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                         //Pythagorean theorem
                         distanceToHubXY=Math.sqrt(Math.pow(hubX, 2)+Math.pow(hubY, 2));
                         //90 degree translation due to camera position
-                        turnAngle=Math.atan2(hubY, hubX)-(Math.PI/2);
+                        turnAngle=Math.atan2(hubY, hubX);
                         
                         //PID calculations
                         forwardOutput=drivePID.calculate(distanceToHubXY, targetDistance);
@@ -109,8 +115,17 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                         if (drivePID.atSetpoint()) {
                             limitedForward = 0;
                         }
-
-                        SmartDashboard.putNumber("Distance to hub", distanceToHubXY);
+                        if (anglePID.atSetpoint() && drivePID.atSetpoint()){
+                            finished = true;
+                        }
+                        
+                        //Debug values
+                        SmartDashboard.putNumber("Distance to hub", round(distanceToHubXY, 3));
+                        SmartDashboard.putNumber("Tag accuracy", round(poseAmbiguity, 3));
+                        SmartDashboard.putNumber("Raw movement to hub", round(forwardOutput,3));
+                        SmartDashboard.putNumber("Raw rotation to hub", round(Units.radiansToDegrees(rotationOutput),3));
+                        SmartDashboard.putNumber("Limited movement to hub", round(limitedForward,3));
+                        SmartDashboard.putNumber("Limited rotation to hub", round(Units.radiansToDegrees(limitedTurn),3));
 
                         break;
                     }else{
@@ -123,6 +138,9 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     }
 
     //Getters
+    public boolean atSetpoint(){
+        return finished;
+    }
     public boolean hasTarget() { 
         return targetVisible; 
     }
