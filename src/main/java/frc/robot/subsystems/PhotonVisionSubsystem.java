@@ -31,6 +31,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private double hubX=0;
     private double hubY=0;
     private double hubZ=0;
+    private double turnAngleToTag=0;
     private boolean targetVisible=false;
     private double forwardOutput=0.0;
     private double rotationOutput=0.0;
@@ -43,7 +44,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         new Rotation3d()
     );
     private final Transform3d shooterToCamera = new Transform3d(
-        new Translation3d(0.0, 0.6096, 0.0),
+        new Translation3d(0.0, 0.0, 0.0),
         new Rotation3d(0, 0, Units.degreesToRadians(0))
     );
     public PhotonCamera getCamera(){
@@ -85,6 +86,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                           .transformBy(shooterToCamera)
                           .transformBy(cameraToTarget)
                           .transformBy(tagToHub);
+                        
 
                         //Gets hub coordinates
                         hubX=hubPose.getX();
@@ -95,6 +97,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                         distanceToHubXY=Math.sqrt(Math.pow(hubX, 2)+Math.pow(hubY, 2));
                         //90 degree translation due to camera position
                         turnAngle=Math.atan2(hubY, hubX);
+                        turnAngleToTag=Math.atan2(cameraToTarget.getY(), cameraToTarget.getX());
                         
                         //PID calculations
                         forwardOutput=drivePID.calculate(distanceToHubXY, targetDistance);
@@ -121,7 +124,9 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                         
                         //Debug values
                         SmartDashboard.putNumber("Distance to hub", round(distanceToHubXY, 3));
-                        SmartDashboard.putNumber("Tag accuracy", round(poseAmbiguity, 3));
+                        SmartDashboard.putNumber("Turn to hub", round(Units.radiansToDegrees(turnAngle), 3));
+                        SmartDashboard.putNumber("Raw turn to hub", round(Units.radiansToDegrees(turnAngleToTag), 3));
+                        SmartDashboard.putNumber("Tag accuracy", round(poseAmbiguity, 5));
                         SmartDashboard.putNumber("Raw movement to hub", round(forwardOutput,3));
                         SmartDashboard.putNumber("Raw rotation to hub", round(Units.radiansToDegrees(rotationOutput),3));
                         SmartDashboard.putNumber("Limited movement to hub", round(limitedForward,3));
