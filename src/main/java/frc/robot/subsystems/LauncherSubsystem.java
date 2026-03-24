@@ -12,8 +12,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.PhotonVisionSubsystem;
+import frc.robot.commands.LauncherTurn;
 import frc.robot.constants.Constants;
 
 
@@ -23,7 +26,8 @@ public class LauncherSubsystem extends SubsystemBase {
   private TalonFX m_LowerShootMotor = new TalonFX(Constants.LauncherConstants.LowerMotorPort);
   private double updatedUpperRPM=Constants.LauncherConstants.UpperMotorSpeedRpm;
   private double updatedLowerRPM=Constants.LauncherConstants.LowerMotorSpeedRpm;
-  
+
+
   public LauncherSubsystem(){
     SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
     SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
@@ -116,6 +120,62 @@ public void setShooterSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
   m_LowerShootMotor.setControl(m_velocityVoltage.withVelocity(lowerMotorSpeed));
 }
 
+
+public void distanceShooterSpeed(double distance){
+  double upperSpeed;
+  double lowerSpeed;
+  
+  if (distance>0 && distance<2.29){
+    upperSpeed = 1400/60;
+    lowerSpeed = ((250*distance)+927.5)/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+  
+  } else if (distance>=2.29 && distance<2.69){
+    upperSpeed = 1400/60;
+    lowerSpeed = ((250*distance)+927.5)/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+
+  } else if (distance>=2.69 && distance<3.20){
+    upperSpeed = ((1274.51*distance)-2028.43)/60;
+    lowerSpeed = ((-1078.43*distance)+4500.98)/60;
+   setShooterSpeed(upperSpeed, lowerSpeed);
+
+  } else if (distance>=3.20 && distance<3.70){
+    upperSpeed = ((50*distance)+1890)/60;
+    lowerSpeed = ((50*distance)+890)/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+
+  } else if (distance>=3.70 && distance<4.20){
+    upperSpeed = ((250*distance)+1150)/60;
+    lowerSpeed = ((200*distance)+335)/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+
+  } else if (distance>=4.20 && distance<4.7){
+    upperSpeed = ((700*distance)-740)/60;
+    lowerSpeed = ((200*distance)+335)/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+
+  } else if (distance>=4.70 && distance<5.2){
+    upperSpeed = 2550/60;
+    lowerSpeed = 1275/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+
+  } else if (distance>=5.20 && distance<5.70){
+    upperSpeed = ((600*distance)-570)/60;
+    lowerSpeed = ((250*distance)-25)/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+
+  } else if (distance>=5.70 && distance<6.2){
+    upperSpeed = ((50*distance)+1890)/60;
+    lowerSpeed = ((50*distance)+890)/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+
+  } else if (distance>=6.2){
+    upperSpeed = ((800*distance)-1710)/60;
+    lowerSpeed = ((250*distance)-25)/60;
+    setShooterSpeed(upperSpeed, lowerSpeed);
+}
+}
 }
 
 

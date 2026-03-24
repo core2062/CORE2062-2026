@@ -143,12 +143,18 @@ public class RobotContainer {
 
      /* OPERATOR */
         /* launcher */
-            operator.a()
-            .onTrue(new LauncherTurn(l_launch, true
-            ))
-            .onFalse(new LauncherTurn(l_launch, true
-            ));
+            // operator.a()
+            // .onTrue(new LauncherTurn(l_launch, true
+            // ))
+            // .onFalse(new LauncherTurn(l_launch, true
+            // ));
 
+            operator.a()
+            .onTrue(new InstantCommand(() -> l_launch.distanceShooterSpeed(SmartDashboard.getNumber("Distance to hub", 3.0)), l_launch
+                ))
+            .onFalse(new InstantCommand(() -> l_launch.distanceShooterSpeed(SmartDashboard.getNumber("Distance to hub", 3.0)), l_launch
+                ));
+            
             operator.b()
              .onTrue(new LauncherTurn(l_launch, false
             ));
