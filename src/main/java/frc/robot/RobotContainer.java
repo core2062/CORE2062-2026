@@ -14,7 +14,9 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -153,28 +155,34 @@ public class RobotContainer {
 
         /* index */
             operator.x()
-                .onTrue(new FeedinCommand(i_index, 
+                .onTrue(new FeedinCommand(i_index,
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
-                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
-                ))
+                    () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed))
+                    .alongWith(new InstantCommand(() -> i_index.setIndexerState(1)))
+                )
                 .onFalse(new FeedinCommand(i_index, 
                     () -> 0.0,  // returns a DoubleSupplier
                     () -> 0.0,   // returns a DoubleSupplier
                     () -> 0.0    //returns a DoubleSupplier
-                ));
+                    )
+                    .alongWith(new InstantCommand(() -> i_index.setIndexerState(0)))
+                );
 
             operator.y()
                .onTrue(new FeedinCommand(i_index, 
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
-                ))
+                    ).alongWith(new InstantCommand(() -> i_index.setIndexerState(2)))
+                )
                .onFalse(new FeedinCommand(i_index, 
                     () -> 0.0,  // returns a DoubleSupplier
                     () -> 0.0,  // retunrns a DoubleSupplier
                     () -> 0.0   // retunrns a DoubleSupplier
-                ));
+                    )
+                .alongWith(new InstantCommand(() -> i_index.setIndexerState(0)))
+            );
         
         /* intake  */ 
             operator.leftBumper()
@@ -271,5 +279,17 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Auto Align", new AimToHub(drivetrain, pv_PhotonVisionSubsystem));
+    }
+
+        public Command createIntakeAgitator(IntakeSubsystem subsystem) {
+        return Commands.sequence(
+            new IntakeRotate(subsystem, IntakeCommand),
+            new IntakeCommand(subsystem, () -> Constants.IntakeConstants.kPivotMotorSpeed),
+            new IntakeRotate(subsystem, 0),
+            new WaitCommand(0.5),
+            new IntakeRotate(subsystem, IntakeCommand.IntakeWheelState.REVERSE),
+            new IntakeCommand(subsystem, () -> Constants.IntakeConstants.kPivotMotorSpeed),
+            new IntakeRotate(subsystem, 0)
+        ).repeatedly();
     }
 }

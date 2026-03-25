@@ -115,6 +115,14 @@ public IntakeSubsystem(){
         }
         return false;
     }
+    public void setIntakeAngle(double angle) {
+        if (intakeAngle > angle) {
+            setArmState(IntakeArmState.MOVINGOUT);
+            System.out.printf("setIntakeAngle MOVINGOUT intakeAngle: %f, angle: %f\n",intakeAngle, angle);
+        } else if (intakeAngle < angle) {
+            setArmState(IntakeArmState.MOVINGIN);
+            System.out.printf("setIntakeAngle MOVINGIN intakeAngle: %f, angle: %f\n",intakeAngle, angle);
+        }
 
     @Override
     public void periodic() {

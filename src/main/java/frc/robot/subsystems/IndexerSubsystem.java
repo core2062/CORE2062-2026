@@ -25,7 +25,7 @@ public class IndexerSubsystem extends SubsystemBase{
     private IntakeSubsystem m_intake;
     private double currentIndexSpeed = 0.0;
     private double currentAgitaterSpeed = 0.0;
-    
+    private int state=0; //0 is stopped 1 is normal 2 is reversed   
     public IndexerSubsystem(IntakeSubsystem intake) {
         m_intake = intake;
         SmartDashboard.putNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed);
@@ -83,6 +83,16 @@ public void setConveyerSpeed(Double speed){
 
 @Override
 public void periodic() {
+        if(state==0){ //Stopped
+            indexerSpeed=0;
+            agitaterSpeed=0;
+        }else if (state==1) { //Normal
+            indexerSpeed=Constants.IndexerConstants.kIndexMotorSpeed;
+            agitaterSpeed=Constants.IndexerConstants.kAgitateMotorSpeed;
+        }else if(state==2){ //Reversed
+            indexerSpeed=-Constants.IndexerConstants.kIndexMotorSpeed;
+            agitaterSpeed=Constants.IndexerConstants.kAgitateMotorSpeed;
+        }
         double dashIndexer = SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, indexerSpeed);
         double dashAgitate = SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, agitaterSpeed);
 
@@ -98,8 +108,11 @@ public void periodic() {
         } else if (Math.abs(currentIndexSpeed) > Constants.IndexerConstants.IndexerDeadband) {
             m_AgitateMotor.setControl(new DutyCycleOut(currentAgitaterSpeed));
         }
+       
     }
-
+    public void setIndexerState(int newState) {
+            this.state = newState;
+    }
 }
 
 
