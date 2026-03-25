@@ -122,57 +122,158 @@ public void setShooterSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
 
 
 public void distanceShooterSpeed(double distance){
+  double[] dis={2.29,2.69,3.2,3.7,4.2,4.7,5.2,5.7,6.2};
+  double[] top={1400,1400,2050,2075,2200,2550,2550,2850,3250};
+  double[] bottom={1500,1600,1050,1075,1175,1275,1275,1400,1525};
+
   double upperSpeed;
   double lowerSpeed;
+  double x1;
+  double x2;
+  double y1;
+  double y2;
+  double y3;
+  double y4;
+  double topslope;
+  double bottomslope;
+
+  // =((y2-y1)/(x2-x1))*distance + ((y1 - ((y2-y1)/(x2-x1))*x1))
+  // =(slope)*distance + (b)\
   
+  /* slope=(y2-y1)/(x2-x1))
+   * b=(y1 - (slope)*x1)
+   */
+
+
   if (distance>0 && distance<2.29){
     upperSpeed = 1400/60;
     lowerSpeed = ((250*distance)+927.5)/60;
     setShooterSpeed(upperSpeed, lowerSpeed);
   
   } else if (distance>=2.29 && distance<2.69){
-    upperSpeed = 1400/60;
-    lowerSpeed = ((250*distance)+927.5)/60;
+    x1=dis[0];
+    x2=dis[1];
+    y1=top[0];
+    y2=top[1];
+    y3=bottom[0];
+    y4=bottom[1];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
     setShooterSpeed(upperSpeed, lowerSpeed);
 
   } else if (distance>=2.69 && distance<3.20){
-    upperSpeed = ((1274.51*distance)-2028.43)/60;
-    lowerSpeed = ((-1078.43*distance)+4500.98)/60;
+    x1=dis[1];
+    x2=dis[2];
+    y1=top[1];
+    y2=top[2];
+    y3=bottom[1];
+    y4=bottom[2];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
    setShooterSpeed(upperSpeed, lowerSpeed);
 
   } else if (distance>=3.20 && distance<3.70){
-    upperSpeed = ((50*distance)+1890)/60;
-    lowerSpeed = ((50*distance)+890)/60;
+    x1=dis[2];
+    x2=dis[3];
+    y1=top[2];
+    y2=top[3];
+    y3=bottom[2];
+    y4=bottom[3];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
     setShooterSpeed(upperSpeed, lowerSpeed);
 
   } else if (distance>=3.70 && distance<4.20){
-    upperSpeed = ((250*distance)+1150)/60;
-    lowerSpeed = ((200*distance)+335)/60;
+    x1=dis[3];
+    x2=dis[4];
+    y1=top[3];
+    y2=top[4];
+    y3=bottom[3];
+    y4=bottom[4];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
     setShooterSpeed(upperSpeed, lowerSpeed);
 
   } else if (distance>=4.20 && distance<4.7){
-    upperSpeed = ((700*distance)-740)/60;
-    lowerSpeed = ((200*distance)+335)/60;
+    x1=dis[4];
+    x2=dis[5];
+    y1=top[4];
+    y2=top[5];
+    y3=bottom[4];
+    y4=bottom[5];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
     setShooterSpeed(upperSpeed, lowerSpeed);
 
   } else if (distance>=4.70 && distance<5.2){
-    upperSpeed = 2550/60;
-    lowerSpeed = 1275/60;
+    x1=dis[5];
+    x2=dis[6];
+    y1=top[5];
+    y2=top[6];
+    y3=bottom[5];
+    y4=bottom[6];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
     setShooterSpeed(upperSpeed, lowerSpeed);
 
   } else if (distance>=5.20 && distance<5.70){
-    upperSpeed = ((600*distance)-570)/60;
-    lowerSpeed = ((250*distance)-25)/60;
+    x1=dis[6];
+    x2=dis[7];
+    y1=top[6];
+    y2=top[7];
+    y3=bottom[6];
+    y4=bottom[7];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
     setShooterSpeed(upperSpeed, lowerSpeed);
 
   } else if (distance>=5.70 && distance<6.2){
-    upperSpeed = ((50*distance)+1890)/60;
-    lowerSpeed = ((50*distance)+890)/60;
+    x1=dis[7];
+    x2=dis[8];
+    y1=top[7];
+    y2=top[8];
+    y3=bottom[7];
+    y4=bottom[8];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
     setShooterSpeed(upperSpeed, lowerSpeed);
 
   } else if (distance>=6.2){
-    upperSpeed = ((800*distance)-1710)/60;
-    lowerSpeed = ((250*distance)-25)/60;
+    x1=dis[8];
+    x2=dis[9];
+    y1=top[8];
+    y2=top[9];
+    y3=bottom[8];
+    y4=bottom[9];
+    topslope=(y2-y1)/(x2-x1);
+    bottomslope=(y4-y3)/(x2-x1);
+
+    upperSpeed = topslope*distance+(y1-(topslope*x1));
+    lowerSpeed = bottomslope*distance+(y3-(bottomslope*x1));
     setShooterSpeed(upperSpeed, lowerSpeed);
 }
 }
