@@ -52,6 +52,7 @@ public IntakeSubsystem(){
         .withInverted(InvertedValue.Clockwise_Positive)
         );
 
+
     final TalonFXConfiguration RotatingMotor_configs = commonConfigs.clone();     
     RotatingMotor_configs.HardwareLimitSwitch.withReverseLimitRemoteCANdiS1(candi);
 
@@ -99,6 +100,11 @@ public IntakeSubsystem(){
         // Send command to motor
         m_RotatingMotor.setControl(request);
     }
+    public boolean isAtAngle(double targetDegrees) {
+        double currentRotations = m_RotatingMotor.getPosition().getValueAsDouble();
+        double targetRotations = (targetDegrees / 360.0) * Constants.IntakeConstants.gearRatio;
+        return Math.abs(currentRotations - targetRotations) < 0.1;
+    }
 
     public void setPivotSpeed(double speed) {
         m_RotatingMotor.setControl(new DutyCycleOut(speed));
@@ -115,14 +121,7 @@ public IntakeSubsystem(){
         }
         return false;
     }
-    public void setIntakeAngle(double angle) {
-        if (intakeAngle > angle) {
-            setArmState(IntakeArmState.MOVINGOUT);
-            System.out.printf("setIntakeAngle MOVINGOUT intakeAngle: %f, angle: %f\n",intakeAngle, angle);
-        } else if (intakeAngle < angle) {
-            setArmState(IntakeArmState.MOVINGIN);
-            System.out.printf("setIntakeAngle MOVINGIN intakeAngle: %f, angle: %f\n",intakeAngle, angle);
-        }
+ 
 
     @Override
     public void periodic() {

@@ -159,29 +159,26 @@ public class RobotContainer {
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed))
-                    .alongWith(new InstantCommand(() -> i_index.setIndexerState(1)))
+                    .alongWith(createIntakeAgitator(i_intake)) 
                 )
                 .onFalse(new FeedinCommand(i_index, 
                     () -> 0.0,  // returns a DoubleSupplier
                     () -> 0.0,   // returns a DoubleSupplier
                     () -> 0.0    //returns a DoubleSupplier
                     )
-                    .alongWith(new InstantCommand(() -> i_index.setIndexerState(0)))
                 );
 
             operator.y()
                .onTrue(new FeedinCommand(i_index, 
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
-                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed)
-                    ).alongWith(new InstantCommand(() -> i_index.setIndexerState(2)))
+                    () -> -SmartDashboard.getNumber(Constants.IndexerConstants.agitaterSpeedString, Constants.IndexerConstants.kAgitateMotorSpeed))
                 )
                .onFalse(new FeedinCommand(i_index, 
                     () -> 0.0,  // returns a DoubleSupplier
                     () -> 0.0,  // retunrns a DoubleSupplier
                     () -> 0.0   // retunrns a DoubleSupplier
                     )
-                .alongWith(new InstantCommand(() -> i_index.setIndexerState(0)))
             );
         
         /* intake  */ 
@@ -283,13 +280,11 @@ public class RobotContainer {
 
         public Command createIntakeAgitator(IntakeSubsystem subsystem) {
         return Commands.sequence(
-            new IntakeRotate(subsystem, IntakeCommand),
-            new IntakeCommand(subsystem, () -> Constants.IntakeConstants.kPivotMotorSpeed),
-            new IntakeRotate(subsystem, 0),
+            new IntakeCommand(subsystem, Constants.IntakeConstants.kUpperIntakeMotorSpeed),
+            new IntakeRotate(subsystem, Constants.IntakeConstants.AgitatorSafeAngle),
             new WaitCommand(0.5),
-            new IntakeRotate(subsystem, IntakeCommand.IntakeWheelState.REVERSE),
-            new IntakeCommand(subsystem, () -> Constants.IntakeConstants.kPivotMotorSpeed),
-            new IntakeRotate(subsystem, 0)
+            new IntakeRotate(subsystem, Constants.IntakeConstants.BumperSafeAngle),
+            new WaitCommand(0.5)
         ).repeatedly();
     }
 }
