@@ -271,19 +271,19 @@ public class RobotContainer {
                 () -> 0.0   // returns as a DoubleSupplier
             ));
         NamedCommands.registerCommand("Intake off", new IntakeCommand(i_intake, 0.0));
-        NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
-        NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
-        NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
-        NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, () -> -Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, () -> -Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, () -> Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, () -> Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Auto Align", new AimToHub(drivetrain, pv_PhotonVisionSubsystem));
     }
 
         public Command createIntakeAgitator(IntakeSubsystem subsystem) {
         return Commands.sequence(
             new IntakeCommand(subsystem, Constants.IntakeConstants.kUpperIntakeMotorSpeed),
-            new IntakeRotate(subsystem, Constants.IntakeConstants.AgitatorSafeAngle),
-            new WaitCommand(0.5),
-            new IntakeRotate(subsystem, Constants.IntakeConstants.BumperSafeAngle),
+            new IntakeRotate(subsystem, () -> Constants.IntakeConstants.kPivotMotorDegree),
+            /*new WaitCommand(0.5),
+            new IntakeRotate(subsystem, () -> -Constants.IntakeConstants.kPivotMotorDegree),*/
             new WaitCommand(0.5)
         ).repeatedly();
     }
