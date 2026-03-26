@@ -33,6 +33,6 @@ public class IntakeRotate extends Command {
     }
     @Override
     public boolean isFinished() {
-        return true;
+        return i_intake.isAtAngle(targetAngle);
     }
 }

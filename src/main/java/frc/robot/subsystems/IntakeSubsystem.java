@@ -100,10 +100,13 @@ public IntakeSubsystem(){
         // Send command to motor
         m_RotatingMotor.setControl(request);
     }
+    
     public boolean isAtAngle(double targetDegrees) {
         double currentRotations = m_RotatingMotor.getPosition().getValueAsDouble();
         double targetRotations = (targetDegrees / 360.0) * Constants.IntakeConstants.gearRatio;
-        return Math.abs(currentRotations - targetRotations) < 0.1;
+        double rotationDifference=Math.abs(currentRotations - targetRotations);
+        System.out.printf("Current rotation: %f, target rotation: %f, Difference in rotation", currentRotations, targetRotations, rotationDifference);
+        return rotationDifference < 1;
     }
 
     public void setPivotSpeed(double speed) {
