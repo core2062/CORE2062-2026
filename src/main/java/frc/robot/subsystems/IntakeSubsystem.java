@@ -27,7 +27,6 @@ import frc.robot.constants.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
     private TalonFX m_UpperIntakeMotor = new TalonFX(Constants.IntakeConstants.kUpperIntakeMotorPort);
-    private TalonFX m_LowerIntakeMotor = new TalonFX(Constants.IntakeConstants.kLowerIntakeMotorPort);
     private TalonFX m_RotatingMotor = new TalonFX(Constants.IntakeConstants.kRotatingInakeMotorPort);
 
     private final CANBus kCANBus = CANBus.roboRIO();
@@ -48,12 +47,6 @@ public IntakeSubsystem(){
         );
 
     final TalonFXConfiguration UpperIntakeMotor_configs = commonConfigs.clone()
-        .withMotorOutput(
-        commonConfigs.MotorOutput.clone()
-        .withInverted(InvertedValue.Clockwise_Positive)
-        );
-
-    final TalonFXConfiguration LowerIntakeMotor_configs = commonConfigs.clone()
         .withMotorOutput(
         commonConfigs.MotorOutput.clone()
         .withInverted(InvertedValue.Clockwise_Positive)
@@ -80,16 +73,14 @@ public IntakeSubsystem(){
 
 
     m_UpperIntakeMotor.getConfigurator().apply(UpperIntakeMotor_configs);
-    m_LowerIntakeMotor.getConfigurator().apply(LowerIntakeMotor_configs);
     m_RotatingMotor.getConfigurator().apply(RotatingMotor_configs);
     m_RotatingMotor.getConfigurator().apply(configs);
     m_RotatingMotor.getConfigurator().apply(limitConfigs);
     }
 
 
-    public void setIntakeSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
+    public void setIntakeSpeed(Double upperMotorSpeed){
         m_UpperIntakeMotor.setControl(new DutyCycleOut(upperMotorSpeed));
-        m_LowerIntakeMotor.setControl(new DutyCycleOut(lowerMotorSpeed));
   }
 
 
