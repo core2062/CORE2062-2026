@@ -51,7 +51,7 @@ public final class Constants {
     public static final int kCANDiport = 0;
 
     public static final double kUpperIntakeMotorSpeed = 0.5;
-    public static final double kPivotMotorDegree = 100.0;
+    public static final double kPivotMotorDegree = 94.0;
     public static final double kPivotMotorSpeed = 0.3;
     public static final double gearRatio = 81.0;
     public static final double AgitatorSafeAngle = -10.0;

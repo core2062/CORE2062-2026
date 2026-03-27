@@ -31,6 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final CANBus kCANBus = CANBus.roboRIO();
     private final CANdi candi = new CANdi(0, kCANBus);
+    private double lastArmAngle = 0;
        
 
 public IntakeSubsystem(){
@@ -91,7 +92,7 @@ public IntakeSubsystem(){
      */
     public void turnDegrees(double degreesToTurn) {
         // Calculate rotations needed
-        double rotations = (degreesToTurn / 360.0)* Constants.IntakeConstants.gearRatio;
+        double rotations = (degreesToTurn / 360.0) * Constants.IntakeConstants.gearRatio;
         
         // Get current position
         double currentPos = m_RotatingMotor.getPosition().getValueAsDouble();
@@ -102,11 +103,18 @@ public IntakeSubsystem(){
     }
     
     public boolean isAtAngle(double targetDegrees) {
-        double currentRotations = m_RotatingMotor.getPosition().getValueAsDouble();
-        double targetRotations = (targetDegrees / 360.0) * Constants.IntakeConstants.gearRatio;
-        double rotationDifference=Math.abs(currentRotations - targetRotations);
-        System.out.printf("Current rotation: %f, target rotation: %f, Difference in rotation", currentRotations, targetRotations, rotationDifference);
-        return rotationDifference < 1;
+        double currentAngle = getIntakeAngle();
+        double difference = Math.abs(currentAngle-lastArmAngle);
+        // double targetDegree = (targetDegrees / 360.0) * Constants.IntakeConstants.gearRatio;
+        // double rotationDifference=Math.abs(currentRotations - targetDegree);
+        System.out.printf("Current angle: %f, lastArmAngle: %f, Difference: %f \n", currentAngle, lastArmAngle, difference);
+        lastArmAngle = currentAngle;
+        if (Math.abs(difference) < 0.1) {
+            return true;
+        }
+        return false;
+        // System.out.printf("Current rotation: %f, target rotation: %f, Difference in rotation: %f", currentRotations, targetDegree, rotationDifference);
+        // return rotationDifference < 1;
     }
 
     public void setPivotSpeed(double speed) {

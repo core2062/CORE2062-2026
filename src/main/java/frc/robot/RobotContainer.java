@@ -282,9 +282,10 @@ public class RobotContainer {
         return Commands.sequence(
             new IntakeCommand(subsystem, Constants.IntakeConstants.kUpperIntakeMotorSpeed),
             new IntakeRotate(subsystem, () -> Constants.IntakeConstants.kPivotMotorDegree),
+            Commands.print("Intake command finish"),
             /*new WaitCommand(0.5),
             new IntakeRotate(subsystem, () -> -Constants.IntakeConstants.kPivotMotorDegree),*/
-            new WaitCommand(0.5)
+            new WaitCommand(10)
         ).repeatedly();
     }
 }

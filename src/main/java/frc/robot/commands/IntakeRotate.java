@@ -12,6 +12,7 @@ public class IntakeRotate extends Command {
     private double kdegrees;
     private final DoubleSupplier angleSupplier;
     private double targetAngle;
+    private boolean run = false;
 
     public IntakeRotate(IntakeSubsystem subsystem, DoubleSupplier angle) {
         i_intake = subsystem;
@@ -29,7 +30,10 @@ public class IntakeRotate extends Command {
 
     @Override
     public void execute() {
-        i_intake.turnDegrees(kdegrees);
+        if (!run){
+            i_intake.turnDegrees(kdegrees);
+            run = true;
+        }
     }
     @Override
     public boolean isFinished() {
