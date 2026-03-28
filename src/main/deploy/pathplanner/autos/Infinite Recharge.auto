@@ -5,24 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Feed in"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -33,25 +15,19 @@
                 }
               },
               {
-                "type": "named",
-                "data": {
-                  "name": "Feed off"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "named",
                       "data": {
-                        "name": "Intake Down"
+                        "name": "Intake On"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "Intake On"
+                        "name": "Intake Down"
                       }
                     }
                   ]
