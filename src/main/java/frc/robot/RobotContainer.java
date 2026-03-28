@@ -31,6 +31,7 @@ import frc.robot.commands.ConveyerTurn;
 import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeHold;
 import frc.robot.commands.IntakeJoystickCommand;
 import frc.robot.commands.IntakeRotate;
 import frc.robot.commands.LauncherTurn;
@@ -270,6 +271,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
+        NamedCommands.registerCommand("Timed Intake Up", new IntakeHold(i_intake, () -> 35));
         NamedCommands.registerCommand("Auto Align", new AimToHub(drivetrain, pv_PhotonVisionSubsystem));
     }
 }

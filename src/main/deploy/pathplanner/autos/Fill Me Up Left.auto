@@ -21,6 +21,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "Timed Intake Up"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "Intake Down"
                       }
                     },
