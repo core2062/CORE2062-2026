@@ -179,15 +179,19 @@ public class RobotContainer {
         
         /* intake  */ 
             operator.leftBumper()
-             .onTrue(new IntakeCommand(i_intake, Constants.IntakeConstants.kUpperIntakeMotorSpeed) 
+             .onTrue(new IntakeCommand(i_intake, 
+                    () -> SmartDashboard.getNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed)) 
                 )
-             .onFalse(new IntakeCommand(i_intake, 0.0)
+             .onFalse(new IntakeCommand(i_intake, 
+                    () -> 0.0)
              );
            
              operator.rightBumper()
-             .onTrue(new IntakeCommand(i_intake, -Constants.IntakeConstants.kUpperIntakeMotorSpeed)
+             .onTrue(new IntakeCommand(i_intake, 
+                    () -> -SmartDashboard.getNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed))
                 )
-             .onFalse(new IntakeCommand(i_intake, 0.0)
+             .onFalse(new IntakeCommand(i_intake, 
+                    () -> 0.0)
              );
 
             i_intake.setDefaultCommand(
@@ -221,7 +225,7 @@ public class RobotContainer {
             MaxSpeed = 0.25 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
             MaxAngularRate = 0.5*RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
         } else {
-            MaxSpeed = 0.65 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+            MaxSpeed = 0.7 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
             MaxAngularRate = 1.0*RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
         }
     }
@@ -250,7 +254,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Conveyer Off", new ConveyerTurn(i_index,0.0));
         NamedCommands.registerCommand("Index On", new IndexerCommand(i_index, Constants.IndexerConstants.kIndexMotorSpeed, Constants.IndexerConstants.kAgitateMotorSpeed));
         NamedCommands.registerCommand("Index Off", new IndexerCommand(i_index, 0.0,0.0));
-        NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake,Constants.IntakeConstants.kUpperIntakeMotorSpeed));
+        NamedCommands.registerCommand("Intake On", new IntakeCommand(i_intake, () -> SmartDashboard.getNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed)));
         NamedCommands.registerCommand("Feed in", new FeedinCommand(i_index,  
                 () -> SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                 () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
@@ -266,12 +270,12 @@ public class RobotContainer {
                 () -> 0.0,  // returns as a DoubleSupplier
                 () -> 0.0   // returns as a DoubleSupplier
             ));
-        NamedCommands.registerCommand("Intake off", new IntakeCommand(i_intake, 0.0));
+        NamedCommands.registerCommand("Intake off", new IntakeCommand(i_intake, () -> 0.0));
         NamedCommands.registerCommand("Intake Down", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Down 2", new IntakeRotate(i_intake, -Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
-        NamedCommands.registerCommand("Timed Intake Up", new IntakeHold(i_intake, () -> 35));
+        NamedCommands.registerCommand("Timed Intake Up", new IntakeHold(i_intake, () -> 27));
         NamedCommands.registerCommand("Auto Align", new AimToHub(drivetrain, pv_PhotonVisionSubsystem));
     }
 }

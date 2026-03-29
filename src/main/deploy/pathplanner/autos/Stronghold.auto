@@ -81,12 +81,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Intake off"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Feed in 2"
           }
         },

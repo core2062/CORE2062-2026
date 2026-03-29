@@ -27,13 +27,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Intake On"
+                        "name": "Intake Down"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "Intake Down"
+                        "name": "Intake On"
                       }
                     }
                   ]
@@ -51,19 +51,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Intake off"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Launcher On"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "Auto Align"
+            "waitTime": 0.5
           }
         },
         {

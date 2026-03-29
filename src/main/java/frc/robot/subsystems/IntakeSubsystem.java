@@ -21,6 +21,7 @@ import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -34,6 +35,9 @@ public class IntakeSubsystem extends SubsystemBase {
        
 
 public IntakeSubsystem(){
+
+    SmartDashboard.putNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed);
+
     final TalonFXConfiguration commonConfigs = new TalonFXConfiguration()
         .withMotorOutput(
         new MotorOutputConfigs()
