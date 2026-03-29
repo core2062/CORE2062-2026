@@ -62,7 +62,7 @@ public IntakeSubsystem(){
     // Configure PID gains (kP, kI, kD) for position control
     //TODO: these configs came from LauncherSubsystem, get from SysId?
     final TalonFXConfiguration configs = new TalonFXConfiguration();
-        configs.Slot0.kP = 0.11; // Proportional Gain
+        configs.Slot0.kP = 0.15; // Proportional Gain
         configs.Slot0.kI = 0.0;  // Integral Gain
         configs.Slot0.kD = 0.0;  // Derivative Gain
        
