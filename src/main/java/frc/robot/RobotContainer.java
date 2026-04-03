@@ -74,6 +74,7 @@ public class RobotContainer {
     public RobotContainer() {
         
         drivetrain = TunerConstants.createDrivetrain();
+        drivetrain.setVisionSubsystem(pv_PhotonVisionSubsystem);
         defineAutoCommands();
         drivetrain.configureAutoBuilder();
         autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");
@@ -241,6 +242,7 @@ public class RobotContainer {
         
          return autoChooser.getSelected();
     }
+    
     
     
     private void defineAutoCommands() {

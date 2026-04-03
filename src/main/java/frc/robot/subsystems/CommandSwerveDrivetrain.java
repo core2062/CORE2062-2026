@@ -17,6 +17,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -69,6 +70,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
+    private PhotonVisionSubsystem m_vision; 
+
+    public void setVisionSubsystem(PhotonVisionSubsystem vision) {
+        this.m_vision = vision;
+    }
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -258,6 +264,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 );
                 m_hasAppliedOperatorPerspective = true;
             });
+        }
+        if (m_vision != null) {
+            var visionPose = m_vision.getEstimatedGlobalPose();
+            if (visionPose.isPresent()) {
+                var estimatedPose = visionPose.get();
+                
+                // This is what corrects the Auto path!
+                addVisionMeasurement(
+                    estimatedPose.estimatedPose.toPose2d(), 
+                    estimatedPose.timestampSeconds,
+                    VecBuilder.fill(0.1,0.1,0.1) // n1: x, n2: y, n3: angle
+                );
+            }
         }
     }
 

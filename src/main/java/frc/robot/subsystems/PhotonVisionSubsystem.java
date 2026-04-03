@@ -8,7 +8,16 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
+
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -47,6 +56,10 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         new Translation3d(0.0, 0.0, 0.0),
         new Rotation3d(0, 0, Units.degreesToRadians(0))
     );
+    private final Transform3d cameraToCenter = new Transform3d(
+        new Translation3d(-0.168275, 0.3937, 0.41275),
+        new Rotation3d(0, 0, Units.degreesToRadians(90))
+    );
     public PhotonCamera getCamera(){
         return camera;
     }
@@ -61,9 +74,17 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         drivePID.setTolerance(0.04);
     }
     private double round(double value, int places) {
-    double scale = Math.pow(10, places);
-    return Math.round(value * scale) / scale;
-}
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
+    }
+
+    //Pose translations
+    private static final AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+    PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
+        tagLayout, 
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        cameraToCenter
+    );
 
     @Override 
     public void periodic(){
@@ -148,6 +169,10 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     }
     public boolean hasTarget() { 
         return targetVisible; 
+    }
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+        var result = camera.getLatestResult();
+        return poseEstimator.update(result);
     }
     public double getDistanceToHub() {
          return distanceToHubXY; 
