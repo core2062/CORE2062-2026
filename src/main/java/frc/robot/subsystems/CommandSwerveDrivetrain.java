@@ -269,12 +269,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             var visionPose = m_vision.getEstimatedGlobalPose();
             if (visionPose.isPresent()) {
                 var estimatedPose = visionPose.get();
-                
-                // This is what corrects the Auto path!
+                System.out.printf("X pose: %f, Y pose: %f, Rotation: %f, Time: %f", estimatedPose.estimatedPose.toPose2d().getX(), estimatedPose.estimatedPose.toPose2d().getY(), estimatedPose.estimatedPose.toPose2d().getRotation().getDegrees(), estimatedPose.timestampSeconds);
                 addVisionMeasurement(
                     estimatedPose.estimatedPose.toPose2d(), 
                     estimatedPose.timestampSeconds,
-                    VecBuilder.fill(0.1,0.1,0.1) // n1: x, n2: y, n3: angle
+                    VecBuilder.fill(999,999,999) // n1: x, n2: y, n3: angle high value is low trust
                 );
             }
         }
