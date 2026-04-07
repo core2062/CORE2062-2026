@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
@@ -164,15 +165,18 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     }
 
     //Getters
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+        var result = camera.getLatestResult();
+        return poseEstimator.update(result);
+    }
+    public double findPoseAmbiguity(){
+        return poseAmbiguity;
+    }
     public boolean atSetpoint(){
         return finished;
     }
     public boolean hasTarget() { 
         return targetVisible; 
-    }
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-        var result = camera.getLatestResult();
-        return poseEstimator.update(result);
     }
     public double getDistanceToHub() {
          return distanceToHubXY; 

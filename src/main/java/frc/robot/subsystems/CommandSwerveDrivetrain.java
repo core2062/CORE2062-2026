@@ -23,8 +23,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -71,6 +75,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
     private PhotonVisionSubsystem m_vision; 
+    StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("MyPose", Pose2d.struct).publish();
+    StructArrayPublisher<Pose2d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose2d.struct).publish();
 
     public void setVisionSubsystem(PhotonVisionSubsystem vision) {
         this.m_vision = vision;
@@ -266,15 +272,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
         if (m_vision != null) {
-            var visionPose = m_vision.getEstimatedGlobalPose();
-            if (visionPose.isPresent()) {
-                var estimatedPose = visionPose.get();
-                System.out.printf("X pose: %f, Y pose: %f, Rotation: %f, Time: %f", estimatedPose.estimatedPose.toPose2d().getX(), estimatedPose.estimatedPose.toPose2d().getY(), estimatedPose.estimatedPose.toPose2d().getRotation().getDegrees(), estimatedPose.timestampSeconds);
-                addVisionMeasurement(
-                    estimatedPose.estimatedPose.toPose2d(), 
-                    estimatedPose.timestampSeconds,
-                    VecBuilder.fill(999,999,999) // n1: x, n2: y, n3: angle high value is low trust
-                );
+            if(m_vision.findPoseAmbiguity()<0.2){
+                var visionPose = m_vision.getEstimatedGlobalPose();
+                if (visionPose.isPresent()) {
+                    var estimatedPose = visionPose.get();
+                    publisher.set(estimatedPose.estimatedPose.toPose2d());
+                    System.out.printf("X pose: %f, Y pose: %f, Rotation: %f, Time: %f", estimatedPose.estimatedPose.toPose2d().getX(), estimatedPose.estimatedPose.toPose2d().getY(), estimatedPose.estimatedPose.toPose2d().getRotation().getDegrees(), estimatedPose.timestampSeconds);
+                    addVisionMeasurement(
+                        estimatedPose.estimatedPose.toPose2d(), 
+                        estimatedPose.timestampSeconds,
+                        VecBuilder.fill(0.5,0.5,0.5) // n1: x, n2: y, n3: angle high value is low trust
+                    );
+                }
             }
         }
     }
