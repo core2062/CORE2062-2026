@@ -75,9 +75,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
     private PhotonVisionSubsystem m_vision; 
-    StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("MyPose", Pose2d.struct).publish();
-    StructArrayPublisher<Pose2d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose2d.struct).publish();
-
+    StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("Estimated Pose", Pose2d.struct).publish();
     public void setVisionSubsystem(PhotonVisionSubsystem vision) {
         this.m_vision = vision;
     }
@@ -272,18 +270,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
         if (m_vision != null) {
-            if(m_vision.findPoseAmbiguity()<0.2){
-                var visionPose = m_vision.getEstimatedGlobalPose();
-                if (visionPose.isPresent()) {
-                    var estimatedPose = visionPose.get();
-                    publisher.set(estimatedPose.estimatedPose.toPose2d());
-                    System.out.printf("X pose: %f, Y pose: %f, Rotation: %f, Time: %f", estimatedPose.estimatedPose.toPose2d().getX(), estimatedPose.estimatedPose.toPose2d().getY(), estimatedPose.estimatedPose.toPose2d().getRotation().getDegrees(), estimatedPose.timestampSeconds);
+            var visionPose = m_vision.getEstimatedGlobalPose();
+            if (visionPose.isPresent()) {
+                var estimatedPose = visionPose.get();
+                publisher.set(estimatedPose.estimatedPose.toPose2d());
+                if(m_vision.findPoseAmbiguity() < 0.3){
                     addVisionMeasurement(
                         estimatedPose.estimatedPose.toPose2d(), 
                         estimatedPose.timestampSeconds,
-                        VecBuilder.fill(0.5,0.5,0.5) // n1: x, n2: y, n3: angle high value is low trust
+                        VecBuilder.fill(0.2,0.2,0.2) // n1: x, n2: y, n3: angle high value is low trust
                     );
+                }else{
+                    addVisionMeasurement(
+                        estimatedPose.estimatedPose.toPose2d(),
+                        estimatedPose.timestampSeconds, 
+                        VecBuilder.fill(999,999,999));
                 }
+                System.out.printf("X pose: %f, Y pose: %f, Rotation: %f, Time: %f", estimatedPose.estimatedPose.toPose2d().getX(), estimatedPose.estimatedPose.toPose2d().getY(), estimatedPose.estimatedPose.toPose2d().getRotation().getDegrees(), estimatedPose.timestampSeconds);
             }
         }
     }

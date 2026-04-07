@@ -163,7 +163,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         }
             
     }
-
+    
     //Getters
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
         var result = camera.getLatestResult();
