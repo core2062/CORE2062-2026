@@ -25,6 +25,8 @@ public final class Constants {
     
     public static final String upperMotorString = "desired UpperMotorSpeed";
     public static final String lowerMotorString = "desired LowerMotorSpeed";
+    public static final String converyMotorString = "desired ConveyerSpeed";
+    public static final String distanceString = "desired distance";
   }
   
   public static class IndexerConstants {

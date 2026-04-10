@@ -3,6 +3,9 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import java.util.Arrays;
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -63,6 +66,14 @@ public class LauncherSubsystem extends SubsystemBase {
       m_UpperShootMotor.getConfigurator().apply(slot0Configs);
       m_LowerShootMotor.getConfigurator().apply(LowerShootMotor_configs);
       m_LowerShootMotor.getConfigurator().apply(slot0Configs);
+      m_ConveyerMotor.getConfigurator().apply(ConveyerMotor_configs);
+  
+  
+      SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
+      SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
+      SmartDashboard.putNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed);
+      SmartDashboard.putNumber(Constants.LauncherConstants.distanceString, 3);
+  
   }
   
   @Override
@@ -120,173 +131,53 @@ public void setConveyerSpeed(Double speed){
   m_ConveyerMotor.setControl(new DutyCycleOut(speed));
 }
 
- public void distanceShooterSpeed(double distance){
-  
-  if (distance>0 && distance<2.29){
-    double[] dis={2.29,2.69,3.2,3.7,4.2,4.7,5.2,5.7,6.2};
-  double[] top={1400,1400,2050,2075,2200,2550,2550,2850,3250};
-  double[] bottom={1500,1600,1050,1075,1175,1275,1275,1400,1525};
+public void distanceShooterSpeed(double distance){
+  // double[] dis={2.29,2.69,3.2,3.7,4.2,4.7,5.2,5.7,6.2};
+  // int[] top={1400,1400,2050,2075,2200,2550,2550,2850,3250};
+  // int[] bottom={1500,1600,1050,1075,1175,1275,1275,1400,1525};
 
-  double upperSpeed;
-  double lowerSpeed;
-  double x1;
-  double x2;
-  double y1;
-  double y2;
-  double y3;
-  double y4;
-  double topslope;
-  double bottomslope;
+  double lowervalue;
+  double uppervalue;
 
-  // =((y2-y1)/(x2-x1))*distance + ((y1 - ((y2-y1)/(x2-x1))*x1))
-  // =(slope)*distance + (b)\
+  double[][] table = {  {2.29,1400,1500},
+                        {2.69,1400,1600}, 
+                        {3.2,2050,1050},
+                        {3.7,2075,1075},
+                        {4.2,2200,1175},
+                        {4.7,2550,1275},
+                        {5.2,2550,1275},
+                        {5.7,2850,1400},
+                        {6.2,3250,1525}};
+   if(distance>table[0][0]&& distance<=table[1][0]){
+          lowervalue=table[0][0];
+          uppervalue=table[1][0];
+   }
+   
+   }
+    
+    
+    
+    
+    
+  //   int lowerindex;
+  //   int upperindex;
+  //   double lms;
+    // double ums;
 
-  /* slope=(y2-y1)/(x2-x1))
-   * b=(y1 - (slope)*x1)
-   */
+  // Arrays.sort(dis);
+  // int p = Arrays.binarySearch(dis, distance); 
+  //       if (p>=0){
+  //           lowerindex = p;
+  //           upperindex = p;  
+  //       }else{
+  //           lowerindex = -p-2;
+  //           upperindex = -p-1;
+  //       }
 
+  double ratio = ((distance - dis[lowerindex])/(dis[upperindex] - dis[lowerindex]));
 
-  if (distance>0 && distance<2.29){
-     x1=dis[0];
-    x2=dis[1];
-    y1=top[0];
-    y2=top[1];
-    y3=bottom[0];
-    y4=bottom[1];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-
-
-  } else if (distance>=2.29 && distance<2.69){
-    x1=dis[0];
-    x2=dis[1];
-    y1=top[0];
-    y2=top[1];
-    y3=bottom[0];
-    y4=bottom[1];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-
-  } else if (distance>=2.69 && distance<3.20){
-    x1=dis[1];
-    x2=dis[2];
-    y1=top[1];
-    y2=top[2];
-    y3=bottom[1];
-    y4=bottom[2];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-   setShooterSpeed(upperSpeed, lowerSpeed);
-
-  } else if (distance>=3.20 && distance<3.70){
-    x1=dis[2];
-    x2=dis[3];
-    y1=top[2];
-    y2=top[3];
-    y3=bottom[2];
-    y4=bottom[3];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-
-  } else if (distance>=3.70 && distance<4.20){
-    x1=dis[3];
-    x2=dis[4];
-    y1=top[3];
-    y2=top[4];
-    y3=bottom[3];
-    y4=bottom[4];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-
-  } else if (distance>=4.20 && distance<4.7){
-    x1=dis[4];
-    x2=dis[5];
-    y1=top[4];
-    y2=top[5];
-    y3=bottom[4];
-    y4=bottom[5];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-
-  } else if (distance>=4.70 && distance<5.2){
-    x1=dis[5];
-    x2=dis[6];
-    y1=top[5];
-    y2=top[6];
-    y3=bottom[5];
-    y4=bottom[6];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-
-  } else if (distance>=5.20 && distance<5.70){
-    x1=dis[6];
-    x2=dis[7];
-    y1=top[6];
-    y2=top[7];
-    y3=bottom[6];
-    y4=bottom[7];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-
-  } else if (distance>=5.70 && distance<6.2){
-    x1=dis[7];
-    x2=dis[8];
-    y1=top[7];
-    y2=top[8];
-    y3=bottom[7];
-    y4=bottom[8];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-
-  } else if (distance>=6.2){
-    x1=dis[8];
-    x2=dis[9];
-    y1=top[8];
-    y2=top[9];
-    y3=bottom[8];
-    y4=bottom[9];
-    topslope=(y2-y1)/(x2-x1);
-    bottomslope=(y4-y3)/(x2-x1);
-
-    upperSpeed = (topslope*distance+(y1-(topslope*x1)))/60;
-    lowerSpeed = (bottomslope*distance+(y3-(bottomslope*x1)))/60;
-    setShooterSpeed(upperSpeed, lowerSpeed);
-}
-}
+  lms = bottom[lowerindex] + (bottom[upperindex]-bottom[lowerindex])*ratio;
+  ums = top[lowerindex] + (top[upperindex]-top[lowerindex])*ratio;
+  setShooterSpeed(ums,lms);
 }
 }
