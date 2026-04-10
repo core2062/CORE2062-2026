@@ -147,16 +147,17 @@ public class RobotContainer {
             // ))
             // .onFalse(new LauncherTurn(l_launch, true
             // ));
+            
+            operator.a()
+            .onTrue(new InstantCommand(() -> l_launch.distanceShooterSpeed(SmartDashboard.getNumber(Constants.LauncherConstants.distanceString, 3)), l_launch
+            ))
+            .onFalse(new InstantCommand(() -> l_launch.distanceShooterSpeed(SmartDashboard.getNumber(Constants.LauncherConstants.distanceString, 3)), l_launch
+            ));
+            
+            operator.b()
+             .onTrue(new LauncherTurn(l_launch, false
+            ));
 
-            // operator.b()
-            //  .onTrue(new LauncherTurn(l_launch, false
-            // ));
-
-             operator.a()
-            .onTrue(new InstantCommand(() -> l_launch.distanceShooterSpeed(SmartDashboard.getNumber("Distance to hub", 3.0)), l_launch
-                ))
-            .onFalse(new InstantCommand(() -> l_launch.distanceShooterSpeed(SmartDashboard.getNumber("Distance to hub", 3.0)), l_launch
-                ));
 
         /* index */
             operator.x()
