@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -26,6 +25,7 @@ public class LauncherSubsystem extends SubsystemBase {
   private TalonFX m_LowerShootMotor = new TalonFX(Constants.LauncherConstants.LowerMotorPort);
   private double updatedUpperRPM=Constants.LauncherConstants.UpperMotorSpeedRpm;
   private double updatedLowerRPM=Constants.LauncherConstants.LowerMotorSpeedRpm;
+
   
   public LauncherSubsystem(){
     SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
@@ -81,12 +81,15 @@ public class LauncherSubsystem extends SubsystemBase {
     double dashUpper = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, updatedUpperRPM);
     double dashLower = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, updatedLowerRPM);
 
+
     if (dashUpper != updatedUpperRPM){
       updatedUpperRPM = dashUpper;
     }  
     if (dashLower != updatedLowerRPM){
       updatedLowerRPM = dashLower;
     }  
+
+
   }  
   
   
@@ -132,13 +135,6 @@ public void setConveyerSpeed(Double speed){
 }
 
 public void distanceShooterSpeed(double distance){
-  // double[] dis={2.29,2.69,3.2,3.7,4.2,4.7,5.2,5.7,6.2};
-  // int[] top={1400,1400,2050,2075,2200,2550,2550,2850,3250};
-  // int[] bottom={1500,1600,1050,1075,1175,1275,1275,1400,1525};
-
-  double lowervalue;
-  double uppervalue;
-
   double[][] table = {  {2.29,1400,1500},
                         {2.69,1400,1600}, 
                         {3.2,2050,1050},
@@ -148,36 +144,27 @@ public void distanceShooterSpeed(double distance){
                         {5.2,2550,1275},
                         {5.7,2850,1400},
                         {6.2,3250,1525}};
-   if(distance>table[0][0]&& distance<=table[1][0]){
-          lowervalue=table[0][0];
-          uppervalue=table[1][0];
-   }
+  int index = 0;
+
+  for (int i = 0; distance >= table[i][0] && i < table.length; i++) {
+    index = i;
+  }
+  
+  int lowerindex = index;
+  int upperindex = index+1;
+  
+  double ratio = ((distance - table[lowerindex][0])/(table[upperindex][0] - table[lowerindex][0]));
+  
+  double ums = (table[lowerindex][1] + (table[upperindex][1]-table[lowerindex][1])*ratio);
+  double lms = (table[lowerindex][2] + (table[upperindex][2]-table[lowerindex][2])*ratio);
+  System.out.println(ums);
+  System.out.println(lms);
+
+  setShooterSpeed(ums/60,lms/60);
+}
+  
+}
    
-   }
-    
-    
-    
-    
-    
-  //   int lowerindex;
-  //   int upperindex;
-  //   double lms;
-    // double ums;
 
-  // Arrays.sort(dis);
-  // int p = Arrays.binarySearch(dis, distance); 
-  //       if (p>=0){
-  //           lowerindex = p;
-  //           upperindex = p;  
-  //       }else{
-  //           lowerindex = -p-2;
-  //           upperindex = -p-1;
-  //       }
+    
 
-  double ratio = ((distance - dis[lowerindex])/(dis[upperindex] - dis[lowerindex]));
-
-  lms = bottom[lowerindex] + (bottom[upperindex]-bottom[lowerindex])*ratio;
-  ums = top[lowerindex] + (top[upperindex]-top[lowerindex])*ratio;
-  setShooterSpeed(ums,lms);
-}
-}
