@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Copy of Drive Through Right Trench to Field"
+                  "pathName": "New Start Drive Through Right Trench to Field"
                 }
               },
               {
@@ -45,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Drive BACK Through Right Trench to home"
+            "pathName": "New Return Drive Through Right Trench to Field"
           }
         },
         {
