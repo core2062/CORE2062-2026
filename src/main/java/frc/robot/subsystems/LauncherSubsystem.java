@@ -139,7 +139,7 @@ public void distanceShooterSpeed(double distance){
                         {3.2,2050,1050},
                         {3.7,2075,1075},
                         {4.2,2200,1175},
-                        {4.7,2550,1275},
+                        {4.7,2225,1200},
                         {5.2,2300,1275},
                         {5.7,2350,1335},
                         {6.2,2400,1385},
@@ -157,7 +157,7 @@ public void distanceShooterSpeed(double distance){
   
   double ums = (table[lowerindex][1] + (table[upperindex][1]-table[lowerindex][1])*ratio);
   double lms = (table[lowerindex][2] + (table[upperindex][2]-table[lowerindex][2])*ratio);
-  System.out.printf("distance: %f, index: %d, ums: %f, lms: %f\n", distance, index, ums, lms);
+  System.out.printf("distance: %f, index: %d, ratio: %f, ums: %f, lms: %f\n", distance, index, ratio, ums, lms);
 
   setShooterSpeed(ums/60.0,lms/60.0);
 }
