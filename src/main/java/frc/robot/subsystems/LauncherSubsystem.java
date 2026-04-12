@@ -87,6 +87,10 @@ public class LauncherSubsystem extends SubsystemBase {
       updatedLowerRPM = dashLower;
     }  
 
+    if (m_LowerShootMotor.get() > 0.1) {
+      distanceShooterSpeed(SmartDashboard.getNumber("Distance to hub", 3.0));
+    }
+
 
   }  
   
@@ -129,15 +133,17 @@ public void setShooterSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
 }
 
 public void distanceShooterSpeed(double distance){
-  double[][] table = {  {2.29,1400,1500},
+  double[][] table = {  {0.0, 1400,1500},
+                        {2.29,1400,1500},
                         {2.69,1400,1600}, 
                         {3.2,2050,1050},
                         {3.7,2075,1075},
                         {4.2,2200,1175},
                         {4.7,2550,1275},
-                        {5.2,2550,1275},
-                        {5.7,2850,1400},
-                        {6.2,3250,1525}};
+                        {5.2,2300,1275},
+                        {5.7,2350,1335},
+                        {6.2,2400,1385},
+                        {50.0, 2400,1385}};
   int index = 0;
 
   for (int i = 0; distance >= table[i][0] && i < table.length; i++) {
@@ -151,8 +157,7 @@ public void distanceShooterSpeed(double distance){
   
   double ums = (table[lowerindex][1] + (table[upperindex][1]-table[lowerindex][1])*ratio);
   double lms = (table[lowerindex][2] + (table[upperindex][2]-table[lowerindex][2])*ratio);
-  System.out.println(ums);
-  System.out.println(lms);
+  System.out.printf("distance: %f, index: %d, ums: %f, lms: %f\n", distance, index, ums, lms);
 
   setShooterSpeed(ums/60.0,lms/60.0);
 }
