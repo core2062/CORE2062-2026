@@ -66,12 +66,10 @@ public class LauncherSubsystem extends SubsystemBase {
       m_UpperShootMotor.getConfigurator().apply(slot0Configs);
       m_LowerShootMotor.getConfigurator().apply(LowerShootMotor_configs);
       m_LowerShootMotor.getConfigurator().apply(slot0Configs);
-      m_ConveyerMotor.getConfigurator().apply(ConveyerMotor_configs);
   
   
       SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
       SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
-      SmartDashboard.putNumber(Constants.LauncherConstants.converyMotorString, Constants.LauncherConstants.ConveyerMotorSpeed);
       SmartDashboard.putNumber(Constants.LauncherConstants.distanceString, 3);
   
   }
@@ -130,10 +128,6 @@ public void setShooterSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
   m_LowerShootMotor.setControl(m_velocityVoltage.withVelocity(lowerMotorSpeed));
 }
 
-public void setConveyerSpeed(Double speed){
-  m_ConveyerMotor.setControl(new DutyCycleOut(speed));
-}
-
 public void distanceShooterSpeed(double distance){
   double[][] table = {  {2.29,1400,1500},
                         {2.69,1400,1600}, 
@@ -160,7 +154,7 @@ public void distanceShooterSpeed(double distance){
   System.out.println(ums);
   System.out.println(lms);
 
-  setShooterSpeed(ums/60,lms/60);
+  setShooterSpeed(ums/60.0,lms/60.0);
 }
   
 }
