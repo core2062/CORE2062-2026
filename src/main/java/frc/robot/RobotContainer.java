@@ -105,9 +105,10 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        driver.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
-        ));
+        // driver.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
+        // ));
+        
         hubAligner.whileTrue(new AimToHub(drivetrain,
                                             pv_PhotonVisionSubsystem
                                             ));
@@ -120,7 +121,7 @@ public class RobotContainer {
 
     /* DRIVER */
         /* robot centric */
-       driver.leftBumper().toggleOnTrue(drivetrain.applyRequest(() ->
+       driver.leftBumper().whileTrue(drivetrain.applyRequest(() ->
                 roboDrivCentric.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
