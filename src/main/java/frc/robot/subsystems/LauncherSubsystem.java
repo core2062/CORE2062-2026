@@ -25,11 +25,14 @@ public class LauncherSubsystem extends SubsystemBase {
   private TalonFX m_LowerShootMotor = new TalonFX(Constants.LauncherConstants.LowerMotorPort);
   private double updatedUpperRPM=Constants.LauncherConstants.UpperMotorSpeedRpm;
   private double updatedLowerRPM=Constants.LauncherConstants.LowerMotorSpeedRpm;
+  
+
 
   
   public LauncherSubsystem(){
     SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
     SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
+    SmartDashboard.putBoolean(Constants.LauncherConstants.speedDistance, false);
 
     final TalonFXConfiguration commonConfigs = new TalonFXConfiguration()
         .withMotorOutput(
@@ -78,6 +81,7 @@ public class LauncherSubsystem extends SubsystemBase {
   public void periodic() {
     double dashUpper = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, updatedUpperRPM);
     double dashLower = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, updatedLowerRPM);
+    boolean shootertype = SmartDashboard.getBoolean(Constants.LauncherConstants.speedDistance, false);
 
 
     if (dashUpper != updatedUpperRPM){
@@ -87,8 +91,8 @@ public class LauncherSubsystem extends SubsystemBase {
       updatedLowerRPM = dashLower;
     }  
 
-    if (m_LowerShootMotor.get() > 0.1) {
-      distanceShooterSpeed(SmartDashboard.getNumber("Distance to hub", 3.0));
+    if (m_LowerShootMotor.get() > 0.1 && shootertype) {
+      distanceShooterSpeed(SmartDashboard.getNumber(Constants.PhotonVisionConstants.DISTANCE_STRING, 3.0));
     }
 
 
