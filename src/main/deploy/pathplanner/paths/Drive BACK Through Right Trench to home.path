@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 7.741,
-        "y": 3.564
+        "y": 3.5638048245614034
       },
       "prevControl": null,
       "nextControl": {
         "x": 7.741,
-        "y": 3.814
+        "y": 3.8138048245614034
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "RightTrenchNeutralZone"
     },
     {
       "anchor": {
@@ -80,7 +80,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 88.47
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
