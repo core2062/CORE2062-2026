@@ -143,18 +143,17 @@ public class RobotContainer {
 
      /* OPERATOR */
         /* launcher */
-            operator.a()
+        operator.a()
             .onTrue(new LauncherTurn(l_launch, true
-            ))
-            .onFalse(new LauncherTurn(l_launch, true
             ));
-
-            operator.b()
+            
+        operator.b()
              .onTrue(new LauncherTurn(l_launch, false
             ));
 
+
         /* index */
-            operator.x()
+        operator.x()
                 .onTrue(new FeedinCommand(i_index, 
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
@@ -166,7 +165,7 @@ public class RobotContainer {
                     () -> 0.0    //returns a DoubleSupplier
                 ));
 
-            operator.y()
+        operator.y()
                .onTrue(new FeedinCommand(i_index, 
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
@@ -179,7 +178,7 @@ public class RobotContainer {
                 ));
         
         /* intake  */ 
-            operator.leftBumper()
+        operator.leftBumper()
              .onTrue(new IntakeCommand(i_intake, 
                     () -> SmartDashboard.getNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed)) 
                 )
@@ -187,34 +186,34 @@ public class RobotContainer {
                     () -> 0.0)
              );
            
-             operator.rightBumper()
-             .onTrue(new IntakeCommand(i_intake, 
-                    () -> -SmartDashboard.getNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed))
-                )
-             .onFalse(new IntakeCommand(i_intake, 
-                    () -> 0.0)
-             );
+        operator.rightBumper()
+            .onTrue(new IntakeCommand(i_intake, 
+                () -> -SmartDashboard.getNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed))
+            )
+            .onFalse(new IntakeCommand(i_intake, 
+                () -> 0.0)
+            );
 
-            i_intake.setDefaultCommand(
-                new IntakeJoystickCommand(
-                    i_intake, 
-                    () -> operator.getRawAxis(XboxController.Axis.kLeftY.value)
-                ));
+        i_intake.setDefaultCommand(
+            new IntakeJoystickCommand(
+                i_intake, 
+                () -> operator.getRawAxis(XboxController.Axis.kLeftY.value)
+            ));
 
-            operator.pov(0)
-            .whileTrue(new InstantCommand(() ->
-                i_intake.turnDegrees(Constants.IntakeConstants.kPivotMotorDegree), i_intake));
+        operator.pov(0)
+        .whileTrue(new InstantCommand(() ->
+            i_intake.turnDegrees(Constants.IntakeConstants.kPivotMotorDegree), i_intake));
 
-            operator.pov(90)//Speed up laucher
-            .onTrue(new InstantCommand(() ->changeLauncherSpeed(1)));
-        
+        operator.pov(90)//Speed up laucher
+        .onTrue(new InstantCommand(() ->changeLauncherSpeed(1)));
+    
 
-            operator.pov(180)
-            .whileTrue(new InstantCommand(() ->
-                i_intake.turnDegrees(-Constants.IntakeConstants.kPivotMotorDegree), i_intake
-                ));
-            operator.pov(270) //Slow down launcher
-            .onTrue(new InstantCommand(() ->changeLauncherSpeed(2)));
+        operator.pov(180)
+        .whileTrue(new InstantCommand(() ->
+            i_intake.turnDegrees(-Constants.IntakeConstants.kPivotMotorDegree), i_intake
+            ));
+        operator.pov(270) //Slow down launcher
+        .onTrue(new InstantCommand(() ->changeLauncherSpeed(2)));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

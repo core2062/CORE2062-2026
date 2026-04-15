@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -24,9 +26,13 @@ public class LauncherSubsystem extends SubsystemBase {
   private double updatedUpperRPM=Constants.LauncherConstants.UpperMotorSpeedRpm;
   private double updatedLowerRPM=Constants.LauncherConstants.LowerMotorSpeedRpm;
   
+
+
+  
   public LauncherSubsystem(){
     SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
     SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
+    SmartDashboard.putBoolean(Constants.LauncherConstants.speedDistance, false);
 
     final TalonFXConfiguration commonConfigs = new TalonFXConfiguration()
         .withMotorOutput(
@@ -63,12 +69,20 @@ public class LauncherSubsystem extends SubsystemBase {
       m_UpperShootMotor.getConfigurator().apply(slot0Configs);
       m_LowerShootMotor.getConfigurator().apply(LowerShootMotor_configs);
       m_LowerShootMotor.getConfigurator().apply(slot0Configs);
+  
+  
+      SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
+      SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
+      SmartDashboard.putNumber(Constants.LauncherConstants.distanceString, 3);
+  
   }
   
   @Override
   public void periodic() {
     double dashUpper = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, updatedUpperRPM);
     double dashLower = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, updatedLowerRPM);
+    boolean shootertype = SmartDashboard.getBoolean(Constants.LauncherConstants.speedDistance, false);
+
 
     if (dashUpper != updatedUpperRPM){
       updatedUpperRPM = dashUpper;
@@ -76,6 +90,12 @@ public class LauncherSubsystem extends SubsystemBase {
     if (dashLower != updatedLowerRPM){
       updatedLowerRPM = dashLower;
     }  
+
+    if (m_LowerShootMotor.get() > 0.1 && shootertype) {
+      distanceShooterSpeed(SmartDashboard.getNumber(Constants.PhotonVisionConstants.DISTANCE_STRING, 3.0));
+    }
+
+
   }  
   
   
@@ -116,6 +136,38 @@ public void setShooterSpeed(Double upperMotorSpeed, Double lowerMotorSpeed){
   m_LowerShootMotor.setControl(m_velocityVoltage.withVelocity(lowerMotorSpeed));
 }
 
-}
+public void distanceShooterSpeed(double distance){
+  double[][] table = {  {0.0, 1400,1500},
+                        {2.29,1400,1500},
+                        {2.69,1400,1600}, 
+                        {3.2,2050,1050},
+                        {3.7,2075,1075},
+                        {4.2,2200,1175},
+                        {4.7,2225,1200},
+                        {5.2,2300,1275},
+                        {5.7,2350,1335},
+                        {6.2,2400,1385},
+                        {50.0, 2400,1385}};
+  int index = 0;
 
+  for (int i = 0; distance >= table[i][0] && i < table.length; i++) {
+    index = i;
+  }
+  
+  int lowerindex = index;
+  int upperindex = index+1;
+  
+  double ratio = ((distance - table[lowerindex][0])/(table[upperindex][0] - table[lowerindex][0]));
+  
+  double ums = (table[lowerindex][1] + (table[upperindex][1]-table[lowerindex][1])*ratio);
+  double lms = (table[lowerindex][2] + (table[upperindex][2]-table[lowerindex][2])*ratio);
+  System.out.printf("distance: %f, index: %d, ratio: %f, ums: %f, lms: %f\n", distance, index, ratio, ums, lms);
+
+  setShooterSpeed(ums/60.0,lms/60.0);
+}
+  
+}
+   
+
+    
 
