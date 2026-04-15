@@ -123,7 +123,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                         }
                         
                         //Debug values
-                        SmartDashboard.putNumber("Distance to hub", round(distanceToHubXY, 3));
+                        SmartDashboard.putNumber(Constants.PhotonVisionConstants.DISTANCE_STRING, round(distanceToHubXY, 3));
                         SmartDashboard.putNumber("Turn to hub", round(Units.radiansToDegrees(turnAngle), 3));
                         SmartDashboard.putNumber("Raw turn to hub", round(Units.radiansToDegrees(turnAngleToTag), 3));
                         SmartDashboard.putNumber("Tag accuracy", round(poseAmbiguity, 5));

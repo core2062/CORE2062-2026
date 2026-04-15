@@ -27,6 +27,10 @@ public final class Constants {
     public static final String lowerMotorString = "desired LowerMotorSpeed";
     public static final String converyMotorString = "desired ConveyerSpeed";
     public static final String distanceString = "desired distance";
+    public static final String speedDistance = "LauncherSpeedBasedOnDistance";
+
+
+
   }
   
   public static class IndexerConstants {
@@ -67,4 +71,9 @@ public final class Constants {
     public static final double maxAngularVelocity = Math.PI*3/2; //TODO: This must be tuned to specific robot
         
     }
+  
+  public static final class PhotonVisionConstants {
+
+    public static final String DISTANCE_STRING = "Distance to hub";
+  }
   }   

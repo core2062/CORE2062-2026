@@ -28,16 +28,26 @@ public LauncherTurn(LauncherSubsystem subsystem, boolean enabled) {
   public void execute() {
     double upperMotorRps;
     double lowerMotorRps;
+    boolean shootertype = SmartDashboard.getBoolean(Constants.LauncherConstants.speedDistance, false);
 
     if (m_enabled) {
-      upperMotorRps = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, l_launch.getUpperTargetRPM()) / 60.0;
-      lowerMotorRps = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, l_launch.getLowerTargetRPM()) / 60.0;
+
+      if (shootertype) {
+        System.out.println("shooting based on distance");
+        l_launch.distanceShooterSpeed(SmartDashboard.getNumber(Constants.PhotonVisionConstants.DISTANCE_STRING, 3.0));
+      } else {
+        System.out.println("shooting based on dashboard");
+        upperMotorRps = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, l_launch.getUpperTargetRPM()) / 60.0;
+        lowerMotorRps = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, l_launch.getLowerTargetRPM()) / 60.0;
+        l_launch.setShooterSpeed(upperMotorRps, lowerMotorRps);
+      }
+
     } else {
      upperMotorRps  = 0.0;
      lowerMotorRps = 0.0;
+     l_launch.setShooterSpeed(upperMotorRps, lowerMotorRps);
     }
-    l_launch.setShooterSpeed(upperMotorRps, lowerMotorRps);
-  }
+  } 
 
   // Called once the command ends or is interrupted.
   @Override
