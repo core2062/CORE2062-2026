@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.constants.Constants;
 import frc.robot.commands.AimToHub;
+import frc.robot.commands.AlignToTrench;
 import frc.robot.commands.ConveyerTurn;
 import frc.robot.commands.FeedinCommand;
 import frc.robot.commands.IndexerCommand;
@@ -138,6 +139,8 @@ public class RobotContainer {
         driver.rightBumper()
             .onTrue(new InstantCommand(()->setMaxSpeed(true)))
             .onFalse(new InstantCommand(()->setMaxSpeed(false)));
+        driver.pov(0)
+            .onTrue(new AlignToTrench(drivetrain, pv_PhotonVisionSubsystem));
 
 
 
@@ -277,5 +280,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Up 2", new IntakeRotate(i_intake, Constants.IntakeConstants.kPivotMotorDegree));
         NamedCommands.registerCommand("Timed Intake Up", new IntakeHold(i_intake, () -> 27));
         NamedCommands.registerCommand("Auto Align", new AimToHub(drivetrain, pv_PhotonVisionSubsystem));
+        NamedCommands.registerCommand("Auto Align To Hub", new AlignToTrench(drivetrain, pv_PhotonVisionSubsystem));
     }
 }

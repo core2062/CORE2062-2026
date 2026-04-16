@@ -21,22 +21,30 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private final PIDController drivePID=new PIDController(0.4,0,0);
     private final SlewRateLimiter fowardlimit=new SlewRateLimiter(6.0);
     private final SlewRateLimiter rotationlimit=new SlewRateLimiter(12.0);
+    private final double targetDistance = 3.9624; // in meters
 
     //Non constant variables
-    private double turnAngle=0;
-    private double poseAmbiguity=0;
-    private double limitedForward=0;
-    private double limitedTurn=0;
-    private double distanceToHubXY=0;
-    private double hubX=0;
-    private double hubY=0;
-    private double hubZ=0;
-    private double turnAngleToTag=0;
-    private boolean targetVisible=false;
-    private double forwardOutput=0.0;
-    private double rotationOutput=0.0;
-    private boolean finished=false;
-    private final double targetDistance=3.9624; // in meters
+    private double trenchTurnAngle = 0.0;
+    private double trenchRotation;
+    private double limitedTrenchTurn = 0.0;
+    private double turnAngle = 0.0;
+    private double poseAmbiguity = 0.0;
+    private double limitedForward = 0.0;
+    private double limitedTurn = 0.0;
+    private double distanceToHubXY = 0.0;
+    private double hubX = 0.0;
+    private double hubY = 0.0;
+    private double hubZ = 0.0;
+    private double turnAngleToTag = 0.0;
+    private boolean targetVisible = false;
+    private boolean trenchTargetVisible = false;
+    private double forwardOutput = 0.0;
+    private double rotationOutput = 0.0;
+    private boolean finished = false;
+    private boolean trenchFinished = false;
+    private double trenchX = 0.0;
+    private double trenchY = 0.0;
+
 
     //Translations
     private final Transform3d tagToHub=new Transform3d(
@@ -51,10 +59,13 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         return camera;
     }
 
-    private boolean isValidId(int id) {
+    private boolean isValidHubId(int id) {
         return (id == 10 || id == 5 || id == 2 || id == 26 || id == 18 || id == 21);
     }
-    
+    private boolean isValidTrenchId(int id) {
+        return (id == 1 || id == 6 || id == 17 || id == 22 );
+    }
+
     public PhotonVisionSubsystem(){
         anglePID.enableContinuousInput(-Math.PI, Math.PI);
         anglePID.setTolerance(Units.degreesToRadians(1.5));
@@ -67,7 +78,8 @@ public class PhotonVisionSubsystem extends SubsystemBase{
 
     @Override 
     public void periodic(){
-        targetVisible=false;
+        targetVisible = false;
+        trenchTargetVisible = false;
         finished=false;
         var results = camera.getAllUnreadResults();
         if (!results.isEmpty()) {
@@ -76,7 +88,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                 for (var target : result.getTargets()) {
                     int id=target.getFiducialId();
                     poseAmbiguity = target.getPoseAmbiguity();
-                    if (isValidId(id)&&poseAmbiguity<0.4) {
+                    if (isValidHubId(id)&&poseAmbiguity<0.4) {
                         targetVisible = true;
 
                         //Coordinate translations 
@@ -95,7 +107,6 @@ public class PhotonVisionSubsystem extends SubsystemBase{
 
                         //Pythagorean theorem
                         distanceToHubXY=Math.sqrt(Math.pow(hubX, 2)+Math.pow(hubY, 2));
-                        //90 degree translation due to camera position
                         turnAngle=Math.atan2(hubY, hubX);
                         turnAngleToTag=Math.atan2(cameraToTarget.getY(), cameraToTarget.getX());
                         
@@ -131,9 +142,23 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                         SmartDashboard.putNumber("Raw rotation to hub", round(Units.radiansToDegrees(rotationOutput),3));
                         SmartDashboard.putNumber("Limited movement to hub", round(limitedForward,3));
                         SmartDashboard.putNumber("Limited rotation to hub", round(Units.radiansToDegrees(limitedTurn),3));
+                    }else if (isValidTrenchId(id) & poseAmbiguity < 0.4){
+                        trenchTargetVisible = true;
+                        Transform3d cameraToTarget = target.getBestCameraToTarget();
+                        Pose3d robotPose = new Pose3d();
+                        Pose3d trenchPose = robotPose.transformBy(cameraToTarget);
+                        trenchX = trenchPose.getX();
+                        trenchY = trenchPose.getY();
+                        trenchTurnAngle = Math.atan2(trenchY, trenchX);
+                        trenchRotation = anglePID.calculate(trenchTurnAngle,0);
+                        trenchRotation = MathUtil.clamp(trenchRotation, -1, 1) * Constants.Swerve.maxAngularVelocity;
+                        limitedTrenchTurn=rotationlimit.calculate(trenchRotation);
 
-                        break;
-                    }else{
+                        if (anglePID.atSetpoint()) {
+                            limitedTrenchTurn = 0.0;
+                            trenchFinished = true;
+                        }
+                    } else{
                         turnAngle=0;
                     }
                 }
@@ -146,11 +171,20 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     public boolean atSetpoint(){
         return finished;
     }
-    public boolean hasTarget() { 
+    public boolean atTrenchSetpoint(){
+        return trenchFinished;
+    }
+    public boolean hasHubTarget() { 
         return targetVisible; 
+    }
+    public boolean hasTrenchTarget() { 
+        return trenchTargetVisible; 
     }
     public double getDistanceToHub() {
          return distanceToHubXY; 
+    }
+    public double getTrenchRotation(){
+        return limitedTrenchTurn;
     }
     public double getSpeedToHub(){
         return limitedForward;
