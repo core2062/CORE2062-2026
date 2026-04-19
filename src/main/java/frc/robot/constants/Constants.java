@@ -40,7 +40,7 @@ public final class Constants {
     
     public static final double ConveyerMotorSpeed = 0.75;
     public static final double kIndexMotorSpeed = 0.75;
-    public static final double kAgitateMotorSpeed = 0.75;
+    public static final double kAgitateMotorSpeed = 0.65;
     public static final double kForward = -1.0;
     public static final double kBackward = 1.0;
     public static final double kOff = 1.0;

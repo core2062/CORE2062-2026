@@ -32,7 +32,7 @@ public class LauncherSubsystem extends SubsystemBase {
   public LauncherSubsystem(){
     SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
     SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
-    SmartDashboard.putBoolean(Constants.LauncherConstants.speedDistance, false);
+    SmartDashboard.putBoolean(Constants.LauncherConstants.speedDistance, true);
 
     final TalonFXConfiguration commonConfigs = new TalonFXConfiguration()
         .withMotorOutput(
