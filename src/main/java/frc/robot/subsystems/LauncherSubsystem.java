@@ -79,10 +79,19 @@ public class LauncherSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
-    double dashUpper = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, updatedUpperRPM);
-    double dashLower = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, updatedLowerRPM);
+    boolean isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoSpeedString, true);
+    double dashUpper;
+    double dashLower;
     boolean shootertype = SmartDashboard.getBoolean(Constants.LauncherConstants.speedDistance, false);
 
+    if (isDemoMode == true) {
+      shootertype = false;
+      dashUpper = Constants.LauncherConstants.DemoUpperMotorSpeedRpm;
+      dashLower = Constants.LauncherConstants.DemoLowerMotorSpeedRpm;
+    } else {
+      dashUpper = Constants.LauncherConstants.UpperMotorSpeedRpm;
+      dashLower = Constants.LauncherConstants.LowerMotorSpeedRpm;
+    }
 
     if (dashUpper != updatedUpperRPM){
       updatedUpperRPM = dashUpper;
@@ -91,7 +100,7 @@ public class LauncherSubsystem extends SubsystemBase {
       updatedLowerRPM = dashLower;
     }  
 
-    if (m_LowerShootMotor.get() > 0.1 && shootertype) {
+    if (m_LowerShootMotor.get() > 0.1 && shootertype && !isDemoMode) {
       distanceShooterSpeed(SmartDashboard.getNumber(Constants.PhotonVisionConstants.DISTANCE_STRING, 3.0));
     }
 

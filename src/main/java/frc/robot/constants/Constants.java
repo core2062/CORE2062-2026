@@ -19,6 +19,8 @@ public final class Constants {
 
     public static final double UpperMotorSpeedRpm = 2050;
     public static final double LowerMotorSpeedRpm  = 1050;
+    public static final double DemoUpperMotorSpeedRpm = 1000;
+    public static final double DemoLowerMotorSpeedRpm  = 1100;
     public static final double kForward = 1.0;
     public static final double kBackward = -1.0;
     public static final double kOff = 0.0;
@@ -66,6 +68,7 @@ public final class Constants {
   }
 
   public static final class Swerve{
+    public static final String demoSpeedString = "Demo Speed";
     public static final double maxSpeed = 2.195; //TODO: This must be tuned to specific robot
     /** Radians per Second */
     public static final double maxAngularVelocity = Math.PI*3/2; //TODO: This must be tuned to specific robot

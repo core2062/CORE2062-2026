@@ -72,10 +72,10 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
     
     public RobotContainer() {
-        
         drivetrain = TunerConstants.createDrivetrain();
         defineAutoCommands();
         drivetrain.configureAutoBuilder();
+        SmartDashboard.setDefaultBoolean(Constants.Swerve.demoSpeedString, true);
         autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");
         
         configureBindings();
@@ -84,18 +84,18 @@ public class RobotContainer {
 
 
     private void configureBindings() {
-            setMaxSpeed(false);
             changeLauncherSpeed(0);
             SmartDashboard.putNumber("desired Max Speed", MaxSpeed);
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
+            drivetrain.applyRequest(() -> {
+                boolean isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoSpeedString, true);
+                setMaxSpeed(isDemoMode);
+                return drive.withVelocityX(-driver.getLeftY() * MaxSpeed)
+                            .withVelocityY(-driver.getLeftX() * MaxSpeed)
+                            .withRotationalRate(-driver.getRightX() * MaxAngularRate);
+            })
         );
 
         // Idle while the robot is disabled. This ensures the configured
