@@ -23,10 +23,13 @@ public class LauncherSubsystem extends SubsystemBase {
   
   private TalonFX m_UpperShootMotor = new TalonFX(Constants.LauncherConstants.UpperMotorPort);
   private TalonFX m_LowerShootMotor = new TalonFX(Constants.LauncherConstants.LowerMotorPort);
-  private double updatedUpperRPM=Constants.LauncherConstants.UpperMotorSpeedRpm;
-  private double updatedLowerRPM=Constants.LauncherConstants.LowerMotorSpeedRpm;
-  
 
+  boolean isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoSpeedString, true);
+  
+  private double updatedUpperRPM = Constants.LauncherConstants.UpperMotorSpeedRpm;
+  private double updatedLowerRPM = Constants.LauncherConstants.LowerMotorSpeedRpm;
+  
+  boolean shootertype = true;
 
   
   public LauncherSubsystem(){
@@ -79,19 +82,13 @@ public class LauncherSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
-    boolean isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoSpeedString, true);
-    double dashUpper;
-    double dashLower;
-    boolean shootertype = SmartDashboard.getBoolean(Constants.LauncherConstants.speedDistance, false);
+    
+    updateTargetSpeeds();
 
-    if (isDemoMode == true) {
-      shootertype = false;
-      dashUpper = Constants.LauncherConstants.DemoUpperMotorSpeedRpm;
-      dashLower = Constants.LauncherConstants.DemoLowerMotorSpeedRpm;
-    } else {
-      dashUpper = Constants.LauncherConstants.UpperMotorSpeedRpm;
-      dashLower = Constants.LauncherConstants.LowerMotorSpeedRpm;
-    }
+    double dashUpper = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, updatedUpperRPM);
+    double dashLower = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, updatedLowerRPM);
+    shootertype = SmartDashboard.getBoolean(Constants.LauncherConstants.speedDistance, false);
+
 
     if (dashUpper != updatedUpperRPM){
       updatedUpperRPM = dashUpper;
@@ -100,12 +97,27 @@ public class LauncherSubsystem extends SubsystemBase {
       updatedLowerRPM = dashLower;
     }  
 
-    if (m_LowerShootMotor.get() > 0.1 && shootertype && !isDemoMode) {
+    if (m_LowerShootMotor.get() > 0.1 && shootertype) {
       distanceShooterSpeed(SmartDashboard.getNumber(Constants.PhotonVisionConstants.DISTANCE_STRING, 3.0));
     }
 
-
-  }  
+  }
+  
+  public void updateTargetSpeeds() {
+    isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoSpeedString, true);
+    if (isDemoMode) {
+      SmartDashboard.putBoolean(Constants.LauncherConstants.speedDistance, false);
+      SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.DemoUpperMotorSpeedRpm);
+      SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.DemoLowerMotorSpeedRpm);
+      updatedUpperRPM = Constants.LauncherConstants.DemoUpperMotorSpeedRpm;
+      updatedLowerRPM = Constants.LauncherConstants.DemoLowerMotorSpeedRpm;
+    } else {
+      SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
+      SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
+      updatedUpperRPM = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
+      updatedLowerRPM = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
+    }
+}
   
   
   public void adjustShootSpeed(int changeShootSpeed){

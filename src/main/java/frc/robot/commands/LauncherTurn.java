@@ -37,8 +37,8 @@ public LauncherTurn(LauncherSubsystem subsystem, boolean enabled) {
         l_launch.distanceShooterSpeed(SmartDashboard.getNumber(Constants.PhotonVisionConstants.DISTANCE_STRING, 3.0));
       } else {
         System.out.println("shooting based on dashboard");
-        upperMotorRps = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, l_launch.getUpperTargetRPM()) / 60.0;
-        lowerMotorRps = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, l_launch.getLowerTargetRPM()) / 60.0;
+        upperMotorRps = l_launch.getUpperTargetRPM() / 60.0;
+        lowerMotorRps = l_launch.getLowerTargetRPM() / 60.0;
         l_launch.setShooterSpeed(upperMotorRps, lowerMotorRps);
       }
 
