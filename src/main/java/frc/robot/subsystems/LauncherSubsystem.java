@@ -30,6 +30,7 @@ public class LauncherSubsystem extends SubsystemBase {
   private double updatedLowerRPM = Constants.LauncherConstants.LowerMotorSpeedRpm;
   
   boolean shootertype = true;
+  private boolean updateDemoMode = false;
 
   
   public LauncherSubsystem(){
@@ -82,8 +83,10 @@ public class LauncherSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
-    
-    updateTargetSpeeds();
+    if(isDemoMode != updateDemoMode){
+      updateTargetSpeeds();
+      updateDemoMode = isDemoMode;
+    }
 
     double dashUpper = SmartDashboard.getNumber(Constants.LauncherConstants.upperMotorString, updatedUpperRPM);
     double dashLower = SmartDashboard.getNumber(Constants.LauncherConstants.lowerMotorString, updatedLowerRPM);
@@ -136,7 +139,7 @@ public class LauncherSubsystem extends SubsystemBase {
     }  
     Double currentSpeedUpperMotor=m_UpperShootMotor.getRotorVelocity().getValue().in(RadiansPerSecond);
     if(Math.abs(currentSpeedUpperMotor) > 0.0){
-      setShooterSpeed(updatedUpperRPM/60.0, updatedLowerRPM/60.0);
+      setShooterSpeed(updatedUpperRPM / 60.0, updatedLowerRPM / 60.0);
     }  
 
   }  
