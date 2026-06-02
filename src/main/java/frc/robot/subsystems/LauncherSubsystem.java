@@ -24,7 +24,7 @@ public class LauncherSubsystem extends SubsystemBase {
   private TalonFX m_UpperShootMotor = new TalonFX(Constants.LauncherConstants.UpperMotorPort);
   private TalonFX m_LowerShootMotor = new TalonFX(Constants.LauncherConstants.LowerMotorPort);
 
-  boolean isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoSpeedString, true);
+  boolean isDemoMode = SmartDashboard.getBoolean(Constants.LauncherConstants.demoShootSpeedString, true);
   
   private double updatedUpperRPM = Constants.LauncherConstants.UpperMotorSpeedRpm;
   private double updatedLowerRPM = Constants.LauncherConstants.LowerMotorSpeedRpm;
@@ -34,6 +34,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
   
   public LauncherSubsystem(){
+    SmartDashboard.setDefaultBoolean(Constants.LauncherConstants.demoShootSpeedString, true);
     SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.UpperMotorSpeedRpm);
     SmartDashboard.putNumber(Constants.LauncherConstants.lowerMotorString, Constants.LauncherConstants.LowerMotorSpeedRpm);
     SmartDashboard.putBoolean(Constants.LauncherConstants.speedDistance, true);
@@ -83,6 +84,12 @@ public class LauncherSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
+    isDemoMode = SmartDashboard.getBoolean(Constants.LauncherConstants.demoShootSpeedString, true);
+
+    if(isDemoMode){
+      SmartDashboard.putBoolean(Constants.LauncherConstants.speedDistance, false);
+    }
+    
     if(isDemoMode != updateDemoMode){
       updateTargetSpeeds();
       updateDemoMode = isDemoMode;
@@ -107,7 +114,7 @@ public class LauncherSubsystem extends SubsystemBase {
   }
   
   public void updateTargetSpeeds() {
-    isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoSpeedString, true);
+    isDemoMode = SmartDashboard.getBoolean(Constants.LauncherConstants.demoShootSpeedString, true);
     if (isDemoMode) {
       SmartDashboard.putBoolean(Constants.LauncherConstants.speedDistance, false);
       SmartDashboard.putNumber(Constants.LauncherConstants.upperMotorString, Constants.LauncherConstants.DemoUpperMotorSpeedRpm);

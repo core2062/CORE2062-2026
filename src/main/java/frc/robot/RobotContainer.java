@@ -75,7 +75,7 @@ public class RobotContainer {
         drivetrain = TunerConstants.createDrivetrain();
         defineAutoCommands();
         drivetrain.configureAutoBuilder();
-        SmartDashboard.setDefaultBoolean(Constants.Swerve.demoSpeedString, true);
+        SmartDashboard.setDefaultBoolean(Constants.Swerve.demoDriveSpeedString, true);
         autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");
         
         configureBindings();
@@ -90,7 +90,7 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() -> {
-                boolean isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoSpeedString, true);
+                boolean isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoDriveSpeedString, true);
                 setMaxSpeed(isDemoMode);
                 return drive.withVelocityX(-driver.getLeftY() * MaxSpeed)
                             .withVelocityY(-driver.getLeftX() * MaxSpeed)

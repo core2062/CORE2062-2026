@@ -30,6 +30,7 @@ public final class Constants {
     public static final String converyMotorString = "desired ConveyerSpeed";
     public static final String distanceString = "desired distance";
     public static final String speedDistance = "LauncherSpeedBasedOnDistance";
+    public static final String demoShootSpeedString = "Demo Shoot Speed";
 
 
 
@@ -68,7 +69,7 @@ public final class Constants {
   }
 
   public static final class Swerve{
-    public static final String demoSpeedString = "Demo Speed";
+    public static final String demoDriveSpeedString = "Demo Drive Speed";
     public static final double maxSpeed = 2.195; //TODO: This must be tuned to specific robot
     /** Radians per Second */
     public static final double maxAngularVelocity = Math.PI*3/2; //TODO: This must be tuned to specific robot
