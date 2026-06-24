@@ -32,6 +32,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private final SlewRateLimiter rotationlimit=new SlewRateLimiter(12.0);
 
     //Non constant variables
+    private Optional<EstimatedRobotPose> visionEst = null;
     private double turnAngle=0;
     private double poseAmbiguity=0;
     private double limitedForward=0;
@@ -69,21 +70,34 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         anglePID.setTolerance(Units.degreesToRadians(1.5));
         drivePID.setTolerance(0.04);
     }
+
     private double round(double value, int places) {
     double scale = Math.pow(10, places);
     return Math.round(value * scale) / scale;
-}
+    }
+
     private static final AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
     PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
             tagLayout, 
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             shooterToCamera
         );
+
     @Override 
     public void periodic(){
         targetVisible=false;
         finished=false;
         var results = camera.getAllUnreadResults();
+        if(results != null){
+            for (var result : results) {
+                if(result.hasTargets()){
+                    visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
+                    if (visionEst.isEmpty()) {
+                        visionEst = poseEstimator.estimateLowestAmbiguityPose(result);
+                    } 
+            
+                }
+            }
+        }
         if (!results.isEmpty()) {
             var result = results.get(results.size() - 1);
             if (result.hasTargets()) {
@@ -158,8 +172,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
 
     //Getters
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-        var result = camera.getLatestResult();
-        return poseEstimator.update(result);
+        return visionEst;
     }
     public double findPoseAmbiguity(){
         return poseAmbiguity;

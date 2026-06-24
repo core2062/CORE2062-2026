@@ -271,25 +271,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
         if (m_vision != null) {
             var visionPose = m_vision.getEstimatedGlobalPose();
-            if (visionPose.isPresent()) {
-                var estimatedPose = visionPose.get();
-                publisher.set(estimatedPose.estimatedPose.toPose2d());
-                if(m_vision.findPoseAmbiguity() < 0.3){
-                    addVisionMeasurement(
-                        estimatedPose.estimatedPose.toPose2d(), 
-                        estimatedPose.timestampSeconds,
-                        VecBuilder.fill(0.2,0.2,0.2) // n1: x, n2: y, n3: angle high value is low trust
-                    );
-                }else{
-                    addVisionMeasurement(
-                        estimatedPose.estimatedPose.toPose2d(),
-                        estimatedPose.timestampSeconds, 
-                        VecBuilder.fill(999,999,999));
+            if(m_vision.getEstimatedGlobalPose() != null){
+                if (visionPose.isPresent()) {
+                    var estimatedPose = visionPose.get();
+                    publisher.set(estimatedPose.estimatedPose.toPose2d());
+                    if(m_vision.findPoseAmbiguity() < 0.3){
+                        addVisionMeasurement(
+                            estimatedPose.estimatedPose.toPose2d(), 
+                            estimatedPose.timestampSeconds,
+                            VecBuilder.fill(0.2,0.2,0.2) // n1: x, n2: y, n3: angle high value is low trust
+                        );
+                    }else{
+                        addVisionMeasurement(
+                            estimatedPose.estimatedPose.toPose2d(),
+                            estimatedPose.timestampSeconds, 
+                            VecBuilder.fill(999,999,999));
+                    }
+                    //System.out.printf("X pose: %f, Y pose: %f, Rotation: %f, Time: %f", estimatedPose.estimatedPose.toPose2d().getX(), estimatedPose.estimatedPose.toPose2d().getY(), estimatedPose.estimatedPose.toPose2d().getRotation().getDegrees(), estimatedPose.timestampSeconds);
                 }
-                System.out.printf("X pose: %f, Y pose: %f, Rotation: %f, Time: %f", estimatedPose.estimatedPose.toPose2d().getX(), estimatedPose.estimatedPose.toPose2d().getY(), estimatedPose.estimatedPose.toPose2d().getRotation().getDegrees(), estimatedPose.timestampSeconds);
             }
-        }
-           
+        }    
     }
 
     private void startSimThread() {
