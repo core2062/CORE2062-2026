@@ -30,6 +30,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private final PIDController drivePID=new PIDController(0.4,0,0);
     private final SlewRateLimiter fowardlimit=new SlewRateLimiter(6.0);
     private final SlewRateLimiter rotationlimit=new SlewRateLimiter(12.0);
+    private final double targetDistance=3.9624; // in meters
 
     //Non constant variables
     private Optional<EstimatedRobotPose> visionEst = null;
@@ -46,16 +47,17 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private double forwardOutput=0.0;
     private double rotationOutput=0.0;
     private boolean finished=false;
-    private final double targetDistance=3.9624; // in meters
+    
 
-    //Translations
+    //Translations - meters
+    //Robot 33in w x 21in l 
     private final Transform3d tagToHub=new Transform3d(
         new Translation3d(-0.6096, 0.0, 0.3048),
         new Rotation3d()
     );
     private final Transform3d shooterToCamera = new Transform3d(
-        new Translation3d(-0.116, 0.0, 0.0),
-        new Rotation3d(0, 0, Units.degreesToRadians(0))
+        new Translation3d(-0.116 + 0.2667, 0.4191, 0.0),
+        new Rotation3d(0, 0, Units.degreesToRadians(90))
     );
     public PhotonCamera getCamera(){
         return camera;
@@ -72,8 +74,8 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     }
 
     private double round(double value, int places) {
-    double scale = Math.pow(10, places);
-    return Math.round(value * scale) / scale;
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
     }
 
     private static final AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
@@ -104,7 +106,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                 for (var target : result.getTargets()) {
                     int id=target.getFiducialId();
                     poseAmbiguity = target.getPoseAmbiguity();
-                    if (isValidId(id)&&poseAmbiguity<0.4) {
+                    if (isValidId(id) && poseAmbiguity<0.4) {
                         targetVisible = true;
 
                         //Coordinate translations 
