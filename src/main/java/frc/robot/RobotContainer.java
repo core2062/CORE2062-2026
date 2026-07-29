@@ -12,15 +12,15 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -61,10 +61,9 @@ public class RobotContainer {
     private final IndexerSubsystem i_index = new IndexerSubsystem(i_intake);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
-
-    private final CommandXboxController driver = new CommandXboxController(0);
-    private final CommandXboxController operator = new CommandXboxController(1);
-    private final JoystickButton hubAligner = new JoystickButton(driver.getHID(), XboxController.Button.kA.value);
+    private final CommandPS5Controller driver = new CommandPS5Controller(0);
+    private final CommandPS5Controller operator = new CommandPS5Controller(1);
+    private final JoystickButton hubAligner = new JoystickButton(driver.getHID(), PS5Controller.Button.kCross.value);
     private final PhotonVisionSubsystem pv_PhotonVisionSubsystem = new PhotonVisionSubsystem();
     
 
@@ -114,28 +113,28 @@ public class RobotContainer {
                                             ));
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        driver.create().and(driver.triangle()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        driver.create().and(driver.square()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        driver.options().and(driver.triangle()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        driver.options().and(driver.square()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     /* DRIVER */
         /* robot centric */
-       driver.leftBumper().whileTrue(drivetrain.applyRequest(() ->
+       driver.L1().whileTrue(drivetrain.applyRequest(() ->
                 roboDrivCentric.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
                 ));
 
-        driver.b().whileTrue(drivetrain.applyRequest(() -> brake));
+        driver.circle().whileTrue(drivetrain.applyRequest(() -> brake));
 
-        driver.x().whileTrue(drivetrain.applyRequest(() ->
+        driver.square().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))
         ));
 
         // Reset the field-centric heading on left bumper press.
-        driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        driver.rightBumper()
+        driver.triangle().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        driver.R1()
             .onTrue(new InstantCommand(()->setMaxSpeed(true)))
             .onFalse(new InstantCommand(()->setMaxSpeed(false)));
 
@@ -143,17 +142,17 @@ public class RobotContainer {
 
      /* OPERATOR */
         /* launcher */
-        operator.a()
+        operator.cross()
             .onTrue(new LauncherTurn(l_launch, true
             ));
             
-        operator.b()
+        operator.circle()
              .onTrue(new LauncherTurn(l_launch, false
             ));
 
 
         /* index */
-        operator.x()
+        operator.square()
                 .onTrue(new FeedinCommand(i_index, 
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                     () -> SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
@@ -165,7 +164,7 @@ public class RobotContainer {
                     () -> 0.0    //returns a DoubleSupplier
                 ));
 
-        operator.y()
+        operator.triangle()
                .onTrue(new FeedinCommand(i_index, 
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.converyMotorString, Constants.IndexerConstants.ConveyerMotorSpeed),
                     () -> -SmartDashboard.getNumber(Constants.IndexerConstants.indexerSpeedString, Constants.IndexerConstants.kIndexMotorSpeed),
@@ -178,7 +177,7 @@ public class RobotContainer {
                 ));
         
         /* intake  */ 
-        operator.leftBumper()
+        operator.L1()
              .onTrue(new IntakeCommand(i_intake, 
                     () -> SmartDashboard.getNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed)) 
                 )
@@ -186,7 +185,7 @@ public class RobotContainer {
                     () -> 0.0)
              );
            
-        operator.rightBumper()
+        operator.R1()
             .onTrue(new IntakeCommand(i_intake, 
                 () -> -SmartDashboard.getNumber(Constants.IntakeConstants.intakeSpeedString, Constants.IntakeConstants.kUpperIntakeMotorSpeed))
             )
@@ -197,7 +196,7 @@ public class RobotContainer {
         i_intake.setDefaultCommand(
             new IntakeJoystickCommand(
                 i_intake, 
-                () -> operator.getRawAxis(XboxController.Axis.kLeftY.value)
+                () -> operator.getRawAxis(PS5Controller.Axis.kLeftY.value)
             ));
 
         operator.pov(0)
