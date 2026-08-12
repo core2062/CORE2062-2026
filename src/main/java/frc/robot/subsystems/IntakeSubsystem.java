@@ -58,7 +58,7 @@ public IntakeSubsystem(){
 
     final TalonFXConfiguration RotatingMotor_configs = commonConfigs.clone();     
     RotatingMotor_configs.HardwareLimitSwitch.withReverseLimitRemoteCANdiS1(candi);
-
+    RotatingMotor_configs.HardwareLimitSwitch.withForwardLimitRemoteCANdiS2(candi);
     // Configure PID gains (kP, kI, kD) for position control
     //TODO: these configs came from LauncherSubsystem, get from SysId?
     final TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -68,12 +68,15 @@ public IntakeSubsystem(){
        
     final var toApply = new CANdiConfiguration();
     toApply.DigitalInputs.S1CloseState = S1CloseStateValue.CloseWhenLow; 
+    toApply.DigitalInputs.S2CloseState = S2CloseStateValue.CloseWhenLow; 
 
     candi.getConfigurator().apply(toApply);
     
     final var limitConfigs = new HardwareLimitSwitchConfigs();
     limitConfigs.ForwardLimitSource = ForwardLimitSourceValue.RemoteCANdiS1;
+    limitConfigs.ReverseLimitSource = ReverseLimitSourceValue.RemoteCANdiS2;
     limitConfigs.ForwardLimitRemoteSensorID = candi.getDeviceID();
+    limitConfigs.ReverseLimitRemoteSensorID = candi.getDeviceID();
 
 
     m_UpperIntakeMotor.getConfigurator().apply(UpperIntakeMotor_configs);
