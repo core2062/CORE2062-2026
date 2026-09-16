@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -91,9 +92,9 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> {
                 boolean isDemoMode = SmartDashboard.getBoolean(Constants.Swerve.demoDriveSpeedString, true);
                 setMaxSpeed(isDemoMode);
-                return drive.withVelocityX(-driver.getLeftY() * MaxSpeed)
-                            .withVelocityY(-driver.getLeftX() * MaxSpeed)
-                            .withRotationalRate(-driver.getRightX() * MaxAngularRate);
+                return drive.withVelocityX(MathUtil.applyDeadband(-driver.getLeftY(), 0.1) * MaxSpeed)
+                            .withVelocityY(MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * MaxSpeed)
+                            .withRotationalRate(MathUtil.applyDeadband(-driver.getRightX(), 0.1) * MaxAngularRate);
             })
         );
 
