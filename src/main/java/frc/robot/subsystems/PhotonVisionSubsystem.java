@@ -56,7 +56,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         new Rotation3d()
     );
     private final Transform3d shooterToCamera = new Transform3d(
-        new Translation3d(-0.116 + 0.2667, 0.4191, 0.0),
+        new Translation3d(0.1524 - 0.17 - 0.11 + 0.3, 0.4191, 0.0),
         new Rotation3d(0, 0, Units.degreesToRadians(90))
     );
     public PhotonCamera getCamera(){
