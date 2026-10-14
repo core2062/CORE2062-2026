@@ -94,7 +94,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
                 if(result.hasTargets()){
                     visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
                     if (visionEst.isEmpty()) {
-                        visionEst = poseEstimator.estimateLowestAmbiguityPose(result);
+                        visionEst = poseEstimator.estimatePnpDistanceTrigSolvePose(result);
                     } 
             
                 }
