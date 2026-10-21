@@ -20,6 +20,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class PhotonVisionSubsystem extends SubsystemBase{
@@ -34,6 +35,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
 
     //Non constant variables
     private Optional<EstimatedRobotPose> visionEst = null;
+    private PhotonPoseEstimator photonPoseEstimator;
     private double turnAngle=0;
     private double poseAmbiguity=0;
     private double limitedForward=0;
@@ -71,6 +73,14 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         anglePID.enableContinuousInput(-Math.PI, Math.PI);
         anglePID.setTolerance(Units.degreesToRadians(1.5));
         drivePID.setTolerance(0.04);
+        photonPoseEstimator = new PhotonPoseEstimator(
+            tagLayout,
+            PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
+            shooterToCamera
+            );
+        photonPoseEstimator.setMultiTagFallbackStrategy(
+            PoseStrategy.PNP_DISTANCE_TRIG_SOLVE
+        );
     }
 
     private double round(double value, int places) {
@@ -80,9 +90,11 @@ public class PhotonVisionSubsystem extends SubsystemBase{
 
     private static final AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
     PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
-            tagLayout, 
-            shooterToCamera
+        tagLayout,
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        shooterToCamera
         );
+        
 
     @Override 
     public void periodic(){
