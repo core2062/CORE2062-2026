@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -10,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -20,7 +22,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class PhotonVisionSubsystem extends SubsystemBase{
@@ -35,7 +36,6 @@ public class PhotonVisionSubsystem extends SubsystemBase{
 
     //Non constant variables
     private Optional<EstimatedRobotPose> visionEst = null;
-    private PhotonPoseEstimator photonPoseEstimator;
     private double turnAngle=0;
     private double poseAmbiguity=0;
     private double limitedForward=0;
@@ -49,8 +49,12 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private double forwardOutput=0.0;
     private double rotationOutput=0.0;
     private boolean finished=false;
-    
+    private Supplier<Rotation2d> heading = null;
 
+    public void setHeadingSupplier(Supplier<Rotation2d> headingSupplier) {
+        this.heading = headingSupplier;
+    }
+    
     //Translations - meters
     //Robot 33in w x 21in l 
     private final Transform3d tagToHub=new Transform3d(
@@ -73,14 +77,6 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         anglePID.enableContinuousInput(-Math.PI, Math.PI);
         anglePID.setTolerance(Units.degreesToRadians(1.5));
         drivePID.setTolerance(0.04);
-        photonPoseEstimator = new PhotonPoseEstimator(
-            tagLayout,
-            PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
-            shooterToCamera
-            );
-        photonPoseEstimator.setMultiTagFallbackStrategy(
-            PoseStrategy.PNP_DISTANCE_TRIG_SOLVE
-        );
     }
 
     private double round(double value, int places) {
@@ -90,11 +86,9 @@ public class PhotonVisionSubsystem extends SubsystemBase{
 
     private static final AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
     PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
-        tagLayout,
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        shooterToCamera
+            tagLayout, 
+            shooterToCamera
         );
-        
 
     @Override 
     public void periodic(){
@@ -102,6 +96,9 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         finished=false;
         var results = camera.getAllUnreadResults();
         if(results != null){
+            var latestResult = results.get(results.size() - 1);
+            double timestamp = latestResult.getTimestampSeconds();
+            poseEstimator.addHeadingData(timestamp, heading.get());
             for (var result : results) {
                 if(result.hasTargets()){
                     visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
