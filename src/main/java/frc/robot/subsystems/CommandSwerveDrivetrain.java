@@ -56,7 +56,7 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
     private PhotonVisionSubsystem m_vision; 
-    StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("Estimated Pose", Pose2d.struct).publish();
+    StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("Current estimated pose", Pose2d.struct).publish();
     public void setVisionSubsystem(PhotonVisionSubsystem vision) {
         this.m_vision = vision;
     }

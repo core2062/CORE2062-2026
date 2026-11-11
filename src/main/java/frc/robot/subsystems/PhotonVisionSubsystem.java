@@ -35,7 +35,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
     private final double targetDistance=3.9624; // in meters
 
     //Non constant variables
-    private Optional<EstimatedRobotPose> visionEst = null;
+    private Optional<EstimatedRobotPose> visionEst = Optional.empty();
     private double turnAngle=0;
     private double poseAmbiguity=0;
     private double limitedForward=0;
@@ -95,17 +95,33 @@ public class PhotonVisionSubsystem extends SubsystemBase{
         targetVisible=false;
         finished=false;
         var results = camera.getAllUnreadResults();
-        if(results != null){
+        visionEst = Optional.empty();
+        if(results != null && !results.isEmpty()){
             var latestResult = results.get(results.size() - 1);
             double timestamp = latestResult.getTimestampSeconds();
-            poseEstimator.addHeadingData(timestamp, heading.get());
-            for (var result : results) {
-                if(result.hasTargets()){
-                    visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
-                    if (visionEst.isEmpty()) {
-                        visionEst = poseEstimator.estimatePnpDistanceTrigSolvePose(result);
-                    } 
-            
+            if(heading != null){
+                poseEstimator.addHeadingData(timestamp, heading.get());
+                for (var result : results) {
+                    if(result.hasTargets()){
+                        visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
+                        if (visionEst.isEmpty()) {
+                            visionEst = poseEstimator.estimatePnpDistanceTrigSolvePose(result);
+                            if(visionEst.isPresent() && result.hasTargets()){
+                                int visionEstID = result.getBestTarget().getFiducialId();
+                                Optional<Pose3d> tagPose = tagLayout.getTagPose(visionEstID);
+                                if(tagPose.isPresent()){
+                                    Pose3d robotToTagPose = visionEst.get().estimatedPose;
+                                    Transform3d correctingTransform = new Transform3d(new Pose3d(), robotToTagPose);
+                                    Pose3d trueRobotPose = tagPose.get().transformBy(correctingTransform);
+                                    visionEst = Optional.of(new EstimatedRobotPose(
+                                        trueRobotPose, 
+                                        timestamp,
+                                        result.getTargets(),
+                                        PoseStrategy.LOWEST_AMBIGUITY));
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -183,6 +199,7 @@ public class PhotonVisionSubsystem extends SubsystemBase{
 
     //Getters
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+        System.out.println(visionEst);
         return visionEst;
     }
     public double findPoseAmbiguity(){

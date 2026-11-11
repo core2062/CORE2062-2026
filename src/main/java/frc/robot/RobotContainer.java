@@ -78,7 +78,7 @@ public class RobotContainer {
         SmartDashboard.setDefaultBoolean(Constants.Swerve.demoDriveSpeedString, true);
         autoChooser = AutoBuilder.buildAutoChooser("Auto Paths");
         drivetrain.setVisionSubsystem(pv_PhotonVisionSubsystem);
-        
+        pv_PhotonVisionSubsystem.setHeadingSupplier(() -> drivetrain.getState().Pose.getRotation());
         configureBindings();
     }
 
